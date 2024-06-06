@@ -1,0 +1,28 @@
+{
+  "name": "network_dashboard",
+  "version": "1.0.0",
+  "description": "network related log parser implementation to summarize and serve data in a dashboard format for analytic purpose",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node ./lib/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@razorvel:RazorVel/network-dashboard.git"
+  },
+  "keywords": [
+    "network-dashboard",
+    "log-parsing",
+    "network",
+    "analysis"
+  ],
+  "author": "Razor Velvet",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "config": "^3.3.11",
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0"
+  }
+}

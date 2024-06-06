@@ -1,0 +1,43 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          mongod
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: MongoDB Database Server
+# Description:       MongoDB Database Server
+### END INIT INFO
+
+# Path to the MongoDB executable
+MONGO_BIN="/usr/bin/mongod"
+
+# MongoDB configuration file
+MONGO_CONFIG="/etc/mongod.conf"
+
+# MongoDB data directory
+MONGO_DATA_DIR="/data/db"
+
+# MongoDB log file
+MONGO_LOG_FILE="/var/log/mongodb/mongod.log"
+
+case "$1" in
+start)
+    mkdir -p "$MONGO_DATA_DIR"
+    $MONGO_BIN --config "$MONGO_CONFIG" >> "$MONGO_LOG_FILE" 2>&1 &
+    ;;
+stop)
+    $MONGO_BIN --config "$MONGO_CONFIG" --shutdown
+    ;;
+restart)
+    $0 stop
+    $0 start
+    ;;
+status)
+    $MONGO_BIN --config "$MONGO_CONFIG" --version
+    ;;
+*)
+    echo "Usage: $0 {start|stop|restart|status}" >&2
+    exit 3
+    ;;
+esac

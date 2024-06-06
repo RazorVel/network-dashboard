@@ -1,0 +1,10 @@
+{
+    "backend-services": {
+        "host": "localhost",
+        "port": 49152
+    },
+    "database": {
+        "host": "localhost",
+        "port": 27017
+    }
+}

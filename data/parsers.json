@@ -1,0 +1,77 @@
+[
+	{
+		"type": "syslog", 
+		"jobs": [
+			{"action": "set", "values": {"data": {}}},
+			{"action": "derive", "from": "log", "property": "syslog", "into": "data"},
+			{"action": "return", "from": "data"}
+		]
+	}, 
+	{
+		"type": "apache",
+		"jobs": [
+			{"action": "tokenize", "from": "log", "delimiters": [[], [" ", ["[", "]"], ["\"", "\""]]], "into": "tokens"},
+			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
+			{"action": "analyze", "from": "tokens", "properties": ["ip_address", "remote_logname", "remote_user", "utc_timestamp", "apache_http_header", "status", "byte"], "into": "data"},
+			{"action": "derive", "from": "data.apache_http_header", "property": "apache_http_header", "into": "data"},
+			{"action": "return", "from": "data"}  
+		]
+	},
+	{
+		"type": "nginx",
+		"jobs": [
+			{"action": "tokenize", "from": "log", "delimiters": [[], [" ", ["[", "]"], ["\"", "\""]]], "into": "tokens"},
+			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
+			{"action": "analyze", "from": "tokens", "properties": ["ip_address", "remote_logname", "remote_user", "utc_timestamp", "apache_http_header", "status", "byte", "http_url", "user_agent"], "into": "data"},
+			{"action": "derive", "from": "data.apache_http_header", "property": "apache_http_header", "into": "data"},
+			{"action": "return", "from": "data"}
+		]
+	}, 
+	{
+		"type": "ftp",	
+		"jobs": [
+			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
+			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
+			{"action": "analyze", "from": "tokens", "properties": ["month_alphabetic_short", "day", "time", "ip_address", "username", "ftp_command"], "into": "data"},
+			{"check": {"data.ftp_command": "RETR"}, "action": "analyze", "from": "data.others", "properties": ["pathname"], "into": "data"},
+			{"action": "return", "from": "data"}	
+		]
+	},
+	{
+		"type": "dhcp",
+		"jobs": [
+			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
+			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
+			{"action": "analyze", "from": "tokens", "properties": ["month_alphabetic_short", "day", "time", "ip_address", "dhcp_event_type"], "into": "data"},
+			{"check": {"data.dhcp_event_type": "DHCPREQUEST"}, "action": "analyze", "from": "data.others", "properties": ["message/ "], "into": "data"},
+			{"action": "return", "from": "data"}
+		]
+	},
+	{
+		"type": "dns",
+		"jobs": [
+			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
+			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
+			{"action": "analyze", "from": "tokens", "properties": ["month_alphabetic_short", "day", "time", "ip_address", "dns_query_type"], "into": "data"},
+			{"check": {"data.dns_query_type": "QUERY"}, "action": "analyze", "from": "data.others", "properties": ["domain_name"], "into": "data"},
+			{"action": "return", "from": "data"}
+		]
+	},
+	{
+		"type": "mysql",
+		"jobs": [
+			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
+			{"action": "analyze", "from": "tokens", "properties": ["iso8601_datepart", "iso8601_timepart", "thread_id", "mysql_event_type"], "into": "data"},
+			{"check": {"data.mysql_event_type": "Query"}, "action": "analyze", "from": "data.others", "properties": ["sql_query/ "], "into": "data"},
+			{"action": "return", "from": "data"}
+		]
+	},
+	{
+		"type": "ssh",
+		"jobs": [
+			{"action": "set", "values": {"data": {}}},
+			{"action": "derive", "from": "log", "property": "ssh_log", "into": "data"},
+			{"action": "return", "from": "data"}
+		]
+	}
+]

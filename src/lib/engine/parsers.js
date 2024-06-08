@@ -1,105 +1,105 @@
+import config from "../config.cjs";
+import { MongoClient } from "mongodb";
+import { makeGetter, makeSetter } from "../../utils/objectHelper.js";
 import { tokenize } from "./tokenizer.js";
 import { analyze } from "./analyzer.js";
 import { derive } from "./deriver.js";
 
-export function parseSyslog(log) {
-    let data = {};
+export let parsers = {};
 
-    data = {...data, ...derive(log, "syslog")};
+export let reloadParsers = async function () {
+    const url = `mongodb://${config.get("database.host")}:${config.get("database.port")}`;
+    const dbName = config.get("database.name");
+    const client = new MongoClient(url);
 
-    return data;
+    try {
+        // Connect to the MongoDB server
+        await client.connect();
+
+        const db = client.db(dbName);
+        const collection = db.collection("parsers");
+
+        let data = await (await collection.find()).toArray();
+
+        parsers = data.reduce((parsers, parser) => {
+            parsers[parser.type] = parse.bind(undefined, parser);
+            return parsers;
+        }, {});
+
+        console.log("reloaded {...parsers}");
+    }
+    catch (err) {
+        console.error('Error:', err);
+    } 
+    finally {
+        // Ensure the client is closed even if an error occurs
+        await client.close();
+    }
 }
 
-export function parseApache(log) {
-    let tokens = tokenize(log, [
-        [],
-        [" ", ["[", "]"], ["\"", "\""]]
-    ]).flat(Infinity);
+export let parse = function (parser, log) {
+    let vault = {log, data: {others: []}};
+    let get = makeGetter(vault);
+    let set = makeSetter(vault);
 
-    let data = analyze(tokens, ["ip_address", "remote_logname", "remote_user", "utc_timestamp", "apache_http_header", "status", "byte"]);
+    for (let job of parser.jobs) {
+        let actionResult;
 
-    data = {...data, ...derive(data.apache_http_header, "apache_http_header")};
+        if (job.check && !checkProperty(job.check)) {
+            continue;
+        } 
 
-    return data;
-}
+        if (job.action == "set") {
+            for (let property of Object.getOwnPropertyNames(job.values || {})) {
+                set(property, job.values[property]);
+            }
+        }
+        else if (job.action == "tokenize") {
+            actionResult = tokenize(get(job.from), job.delimiters)
+        }
+        else if (job.action == "flatten") {
+            actionResult = get(job.from)?.flat(job.infinity ? Infinity : (job.depth || 0));
+        }
+        else if (job.action == "analyze") {
+            actionResult = analyze(get(job.from), job.properties);
+        }
+        else if (job.action == "derive") {
+            actionResult = derive(get(job.from), job.property);
+        }
+        else if (job.action == "return") {
+            let value = get(job.from);
+            if (isBaseObject(value)) {
+                value = {others: [], ...value};
+            }
+            return value;
+        }
+        else {
+            throw new Error("Invalid action:", job.action);
+        }
 
-export function parseNginx(log) {
-    let tokens = tokenize(log, [
-        [],
-        [" ", ["[", "]"], ["\"", "\""]]
-    ]).flat(Infinity);
+        if (isBaseObject(actionResult) && isBaseObject(get(job.into))) {
+            actionResult = {...get(job.into), ...actionResult};
+        }
 
-    let data = analyze(tokens, ["ip_address", "remote_logname", "remote_user", "utc_timestamp", "apache_http_header", "status", "byte", "http_url", "user_agent"]);
-
-    data = {...data, ...derive(data.apache_http_header, "apache_http_header")};
-
-    return data;
-}
-
-export function parseFTP(log) {
-    let tokens = tokenize(log, [
-        [],
-        [" "]
-    ]).flat(Infinity);
-
-    let data = analyze(tokens, ["month_alphabetic_short", "day", "time", "ip_address", "username", "ftp_command"]);
-
-    if (data.ftp_command == "RETR") {
-        data = {...data, ...analyze(data.others, ["pathname"])};    
+        set(job.into, actionResult);
     }
 
-    return data;
-}
+    return {};
 
-export function parseDHCP(log) {
-    let tokens = tokenize(log, [
-        [],
-        [" "]
-    ]).flat(Infinity);
-
-    let data = analyze(tokens, ["month_alphabetic_short", "day", "time", "ip_address", "dhcp_event_type"]);
-
-    if (data.dhcp_event_type == "DHCPREQUEST") {
-        data = {...data, ...analyze(data.others, ["message/ "])};
+    function checkProperty(conditions) {
+        for (let descriptor in Object.getOwnPropertyNames(conditions)) {
+            if (get(descriptor) != conditions[descriptor]) {
+                return false;
+            }
+        }
+    
+        return true;
     }
 
-    return data;
-}
-
-export function parseDNS(log) {
-    let tokens = tokenize(log, [
-        [],
-        [" "]
-    ]).flat(Infinity);
-
-    let data = analyze(tokens, ["month_alphabetic_short", "day", "time", "ip_address", "dns_query_type"]);
-
-    if (data.dns_query_type == "QUERY") {
-        data = {...data, ...analyze(data.others, ["domain_name"])};
+    function isBaseObject(subject) {
+        return subject instanceof Object && subject.constructor == Object;
     }
-
-    return data;
 }
 
-export function parseMySQL(log) {
-    let tokens = tokenize(log, [
-        [],
-        [" "]
-    ]);
-
-    let data = analyze(tokens, ["iso8601_datepart", "iso8601_timepart", "thread_id", "mysql_event_type"]);
-
-    if (data.mysql_event_type == "Query") {
-        data = {...data, ...analyze(data.others, ["sql_query/ "])};
-    }
-
-    return data;
-}
-
-export function parseSSH(log) {
-    let data = {};
-
-    data = {...data, ...derive(log, "ssh_log")};
-
-    return data;
-}
+await reloadParsers();
+console.log(parsers);

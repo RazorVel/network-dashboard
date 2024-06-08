@@ -1,21 +1,11 @@
-export function fieldBuilder() {
+import { mergeFields as merge } from "../lib/engine/fields.js";
+import { MongoClient } from "mongodb";
+import config from "../lib/config.cjs";
+
+function fieldBuilder() {
     // The logic for building patterns and merging fields
     let patterns = {};
-
-    const mergeFields = function (format, derivatives) {
-        let toNonCapturing = (pattern) => pattern.replace(/\\.|(\((?!\?))/g, (match, p1) => {
-            // If it's an escaped character, return it as is
-            if (match.startsWith("\\")) {
-                return match;
-            }
-            // Otherwise, replace the capturing group with non-capturing group
-            return p1 ? '(?:' : match;
-        });
-
-        let pattern = new RegExp(format.replace(/{(\d+)}/g, (match, number) => patterns[derivatives[number]] ? `(${toNonCapturing(patterns[derivatives[number]].pattern.source)})` : match ));
-        
-        return {pattern, derivatives};
-    };
+    let mergeFields = merge.bind(undefined, patterns);
 
     // Define patterns here...
     //level 1
@@ -42,7 +32,6 @@ export function fieldBuilder() {
     patterns.byte = {pattern: /\d+/, derivatives: []};
     patterns.username = {pattern: /[a-z_](?:[a-z0-9_-]{0,31}|[a-z0-9_-]{0,30}\$)/, derivatives: []};
     patterns.user_agent = {pattern: /(?!\s)(?:(?<![\d\w.\/])(?:(?:[\w\d,]+\/(?!\.)[\d\.]+\+?(?<!\.))|(?:\((?:[\d\w\s\.\/-](?:;\s)?)+\))|(?:))\s?)+(?<!\s)/, derivatives: []};
-    patterns.dhcp_event_type = {pattern: /DHCP[A-Z]+/, derivatives: []};
     patterns.domain_name = {pattern: /(?:(?:www\.)?|(?:[a-zA-Z0-9-]+\.)+)?[a-zA-Z0-9-]{2,}(?:\.[a-zA-Z]{2,}){1,2}/, derivatives: []};
     patterns.all_capital_letters = {pattern: /[A-Z]+/, derivatives: []};
     patterns.initial_capital_letters = {pattern: /[A-Z][a-z]*/, derivatives: []};
@@ -64,7 +53,7 @@ export function fieldBuilder() {
     patterns.apache_http_header = mergeFields("{0} {1} {2}", ["http_request_protocol", "url_pathname", "http_version"]);
     patterns.utc_timestamp = mergeFields("{0}/{1}/{2}:{3}:{4}:{5} {6}", ["day", "month_alphabetic_short", "year", "hour", "minute", "second", "utc_offset"]);
     patterns.http_url = mergeFields("(?:https?:\\/\\/)?{0}(?:\\/[a-zA-Z0-9\\.-]{2,})*", ["domain_name"]);
-    patterns.dhcp_event_type = mergeFields("DHCP{0}", ["all_capital_event_type"]);
+    patterns.dhcp_event_type = mergeFields("DHCP{0}", ["all_capital_letters"]);
     patterns.iso8601_datepart = mergeFields("{0}-{1}-{2}", ["year", "month", "day"]);
     patterns.iso8601_timepart = mergeFields("{0}:{1}:{2}", ["hour", "minute", "second"]);
 
@@ -77,5 +66,49 @@ export function fieldBuilder() {
     patterns.syslog = mergeFields("<{0}>{1} {2} {3}", ["priority", "datetime", "hostname", "application_log"]);
     patterns.ssh_log = mergeFields("{0} {1} {2}", ["datetime", "hostname", "application_log"]);
 
-    return patterns;
+    let collection = [];
+    for (let name in patterns) {
+        patterns.hasOwnProperty(name) && collection.push({
+            name,
+            pattern: patterns[name].pattern,
+            derivatives: patterns[name].derivatives
+        });
+    }
+
+    return collection;
 }
+
+await (async function insertData() {
+    const url = `mongodb://${config.get("database.host")}:${config.get("database.port")}`;
+    const dbName = config.get("database.name");
+    const client = new MongoClient(url);
+
+    try {
+        // Connect to the MongoDB server
+        await client.connect();
+
+        // Get the database and collection
+        const db = client.db(dbName);
+        const collection = db.collection('fields');
+
+        let data = fieldBuilder();
+
+        // Prepare bulk operations
+        const bulkOps = data.map(entry => ({
+            updateOne: {
+                filter: { name: entry.name },
+                update: { $set: entry },
+                upsert: true
+            }
+        }));
+
+        // Execute bulk operations
+        await collection.bulkWrite(bulkOps);
+        console.log('Populated [...fields]');
+    } catch (err) {
+        console.error('Error:', err);
+    } finally {
+        // Ensure the client is closed even if an error occurs
+        await client.close();
+    }
+})(); 

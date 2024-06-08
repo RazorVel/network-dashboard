@@ -1,18 +1,9 @@
-import { fields } from "./fields.js";
-import { parseSyslog, parseApache, parseNginx, parseFTP, parseDHCP, parseDNS, parseMySQL, parseSSH } from "./parsers.js";
+import { fields, reloadFields } from "./fields.js";
+import { parsers, parse, reloadParsers } from "./parsers.js";
 
 class LogParser {
     constructor() {
-        this.parsers = {
-            syslog: parseSyslog.bind(this),
-            apache: parseApache.bind(this),
-            nginx: parseNginx.bind(this),
-            ftp: parseFTP.bind(this),
-            dhcp: parseDHCP.bind(this),
-            dns: parseDNS.bind(this),
-            mysql: parseMySQL.bind(this),
-            ssh: parseSSH.bind(this)
-        };
+        this.parsers = parsers;
     }
 
     fields = fields;

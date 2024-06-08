@@ -22,7 +22,7 @@ RUN apt-get update && \
    echo "deb [ signed-by=/usr/share/keyrings/mongodb-server-7.0.gpg ] http://repo.mongodb.org/apt/debian bullseye/mongodb-org/7.0 main" | \
    tee /etc/apt/sources.list.d/mongodb-org-7.0.list && \
     apt-get update && \
-    apt-get install -y mongodb-org mongodb-mongosh systemctl sudo && \
+    apt-get install -y mongodb-org mongodb-mongosh systemctl sudo vim && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -58,9 +58,10 @@ RUN --mount=type=bind,source=./src/package.json,target=package.json \
 
 # Copy the rest of the source files into the image.
 COPY ./src .
+COPY ./data ./data
 
 # Set config dir
-ENV NODE_CONFIG_DIR ./lib/config
+ENV NODE_CONFIG_DIR ./config
 
 # Expose the ports that the application listens on.
 EXPOSE 49152
@@ -68,7 +69,6 @@ EXPOSE 27017
 
 # Install your Node.js dependencies
 RUN npm install
-
 
 COPY ./entrypoint.sh .
 RUN chown root ./entrypoint.sh && \

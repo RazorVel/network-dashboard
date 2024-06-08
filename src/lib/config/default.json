@@ -1,10 +1,11 @@
 {
     "backend-services": {
-        "host": "localhost",
+        "host": "127.0.0.1",
         "port": 49152
     },
     "database": {
-        "host": "localhost",
+        "name": "network_dashboard",
+        "host": "127.0.0.1",
         "port": 27017
     }
 }

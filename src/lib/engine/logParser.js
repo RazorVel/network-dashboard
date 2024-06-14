@@ -1,5 +1,5 @@
-import { fields, reloadFields } from "./fields.js";
-import { parsers, parse, reloadParsers } from "./parsers.js";
+import { fields } from "./fields.js";
+import { parsers } from "./parsers.js";
 
 class LogParser {
     constructor() {

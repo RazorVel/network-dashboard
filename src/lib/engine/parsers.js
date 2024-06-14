@@ -1,22 +1,15 @@
-import config from "../config.cjs";
-import { MongoClient } from "mongodb";
 import { makeGetter, makeSetter } from "../../utils/objectHelper.js";
 import { tokenize } from "./tokenizer.js";
 import { analyze } from "./analyzer.js";
 import { derive } from "./deriver.js";
+import { client, db } from "../models/db.js";
 
 export let parsers = {};
 
 export let reloadParsers = async function () {
-    const url = `mongodb://${config.get("database.host")}:${config.get("database.port")}`;
-    const dbName = config.get("database.name");
-    const client = new MongoClient(url);
-
     try {
-        // Connect to the MongoDB server
         await client.connect();
 
-        const db = client.db(dbName);
         const collection = db.collection("parsers");
 
         let data = await (await collection.find()).toArray();
@@ -102,4 +95,3 @@ export let parse = function (parser, log) {
 }
 
 await reloadParsers();
-console.log(parsers);

@@ -1,6 +1,5 @@
 import { mergeFields as merge } from "../lib/engine/fields.js";
-import { MongoClient } from "mongodb";
-import config from "../lib/config.cjs";
+import { client, db } from "../lib/models/db.js";
 
 function fieldBuilder() {
     // The logic for building patterns and merging fields
@@ -15,7 +14,7 @@ function fieldBuilder() {
     patterns.http_request_protocol = {pattern: /GET|POST|PUT|DELETE|PATCH|HEAD|OPTIONS|CONNECT|TRACE/, derivatives: []};
     patterns.url_pathname = {pattern: /\/?(?:[^\/\s]+\/?)+(?<!\/)/, derivatives: []};
     patterns.http_version = {pattern: /HTTP\/[0-9]\.[0-9](?:\.[0-9])?/, derivatives: []};
-    patterns.day = {pattern: /[0-2]\d|3[0-1]/, derivatives: []};
+    patterns.day = {pattern: /[1-9]|0[1-9]|[1-2][0-9]|3[0-1]/, derivatives: []};
     patterns.month = {pattern: /0\d|1[0-2]/, derivatives: []};
     patterns.year_short = {pattern: /\d{2}/, derivatives: []};
     patterns.year = {pattern: /\d{4}/, derivatives: []};
@@ -24,7 +23,7 @@ function fieldBuilder() {
     patterns.second = {pattern: /[0-5]\d/, derivatives: []};
     patterns.utc_offset = {pattern: /[+-](?:\d{2}:?(?:\d{2})?)?/, derivatives: []};
     patterns.hostname = {pattern: /(?![.-])[\w.-]*(?<![.-])/, derivatives: []};
-    patterns.application = {pattern: /\w+/, derivatives: []};
+    patterns.application = {pattern: /(?=[\w\/])(?:[\w\.\/\-]+|[\w\.\-]+(?:@[\w\.\-]+)?)(?<=\w)/, derivatives: []};
     patterns.process_id = {pattern: /\d+/, derivatives: []};
     patterns.message = {pattern: /.+/, derivatives: []};
     patterns.ip_address = {pattern: /(?:(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\.){3}(?:[0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])/, derivatives: []};
@@ -49,7 +48,7 @@ function fieldBuilder() {
 
     //level 2
     patterns.time = mergeFields("{0}:{1}:{2}", ["hour", "minute", "second"]);
-    patterns.process = mergeFields("{0}\\[{1}\\]", ["application", "process_id"]);
+    patterns.process = mergeFields("{0}(?:\\[{1}\\])?", ["application", "process_id"]);
     patterns.apache_http_header = mergeFields("{0} {1} {2}", ["http_request_protocol", "url_pathname", "http_version"]);
     patterns.utc_timestamp = mergeFields("{0}/{1}/{2}:{3}:{4}:{5} {6}", ["day", "month_alphabetic_short", "year", "hour", "minute", "second", "utc_offset"]);
     patterns.http_url = mergeFields("(?:https?:\\/\\/)?{0}(?:\\/[a-zA-Z0-9\\.-]{2,})*", ["domain_name"]);
@@ -58,12 +57,12 @@ function fieldBuilder() {
     patterns.iso8601_timepart = mergeFields("{0}:{1}:{2}", ["hour", "minute", "second"]);
 
     //level 3
-    patterns.datetime = mergeFields("{0} {1} {2}", ["month_alphabetic_short", "day", "time"]);
+    patterns.datetime = mergeFields("{0}  ?{1} {2}", ["month_alphabetic_short", "day", "time"]);
     patterns.application_log = mergeFields("{0}: {1}", ["process", "message"]);
     patterns.iso8601_datetime = mergeFields("{0} {1}", ["iso8601_datepart", "iso8601_timepart"]); 
 
     //level 4
-    patterns.syslog = mergeFields("<{0}>{1} {2} {3}", ["priority", "datetime", "hostname", "application_log"]);
+    patterns.syslog = mergeFields("{0} {1} {2}", ["datetime", "hostname", "application_log"]);
     patterns.ssh_log = mergeFields("{0} {1} {2}", ["datetime", "hostname", "application_log"]);
 
     let collection = [];
@@ -79,16 +78,10 @@ function fieldBuilder() {
 }
 
 await (async function insertData() {
-    const url = `mongodb://${config.get("database.host")}:${config.get("database.port")}`;
-    const dbName = config.get("database.name");
-    const client = new MongoClient(url);
-
     try {
-        // Connect to the MongoDB server
         await client.connect();
 
-        // Get the database and collection
-        const db = client.db(dbName);
+        // Get the collection
         const collection = db.collection('fields');
 
         let data = fieldBuilder();

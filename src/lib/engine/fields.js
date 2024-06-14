@@ -1,5 +1,4 @@
-import config from "../config.cjs";
-import { MongoClient } from "mongodb";
+import { client, db } from "../models/db.js";
 
 export let mergeFields = function (patterns, format, derivatives) {
     let toNonCapturing = (pattern) => pattern.replace(/\\.|(\((?!\?))/g, (match, p1) => {
@@ -19,15 +18,9 @@ export let mergeFields = function (patterns, format, derivatives) {
 export let fields = {};
 
 export let reloadFields = async function () {
-    const url = `mongodb://${config.get("database.host")}:${config.get("database.port")}`;
-    const dbName = config.get("database.name");
-    const client = new MongoClient(url);
-
     try {
-        // Connect to the MongoDB server
         await client.connect();
 
-        const db = client.db(dbName);
         const collection = db.collection("fields");
 
         fields = await (await collection.find()).toArray();

@@ -1,12 +1,15 @@
-import { MongoClient } from "mongodb";
 import { readFileSync } from "fs";
-import config from "../lib/config.cjs";
+import { fileURLToPath } from "url";
+import { client, db } from "../lib/models/db.js";
 import path from "path"
 
 let data = [];
 
+let __filename = fileURLToPath(import.meta.url);
+let __dirname = path.dirname(__filename);
+
 try {
-    const jsonFile = readFileSync((path.dirname(import.meta.url).substring(7) || "./" ) + "/parsers.json", "utf8");
+    const jsonFile = readFileSync((__dirname || "." ) + "/parsers.json", "utf8");
     data = JSON.parse(jsonFile);
 }
 catch (err) {
@@ -14,16 +17,10 @@ catch (err) {
 }
 
 await (async function insertData() {
-    const url = `mongodb://${config.get("database.host")}:${config.get("database.port")}`;
-    const dbName = config.get("database.name");
-    const client = new MongoClient(url);
-
     try {
-        // Connect to the MongoDB server
         await client.connect();
 
-        // Get the database and collection
-        const db = client.db(dbName);
+        // Get the collection
         const collection = db.collection('parsers');
 
         // Prepare bulk operations

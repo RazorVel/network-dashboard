@@ -1,0 +1,12 @@
+[Unit]
+Description=Network Dashboard Log Collector Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/var/log/network_dashboard
+Restart=always
+ExecStart=/usr/local/bin/log_collector.sh
+
+[Install]
+WantedBy=multi-user.target

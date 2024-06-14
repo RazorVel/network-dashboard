@@ -1,6 +1,7 @@
 [
 	{
 		"type": "syslog", 
+		"lookups": ["/var/log/syslog", "/var/log/messages"],
 		"jobs": [
 			{"action": "set", "values": {"data": {}}},
 			{"action": "derive", "from": "log", "property": "syslog", "into": "data"},
@@ -8,7 +9,8 @@
 		]
 	}, 
 	{
-		"type": "apache",
+		"type": "apache_access",
+		"lookups": ["/var/log/apache2/access.log"],
 		"jobs": [
 			{"action": "tokenize", "from": "log", "delimiters": [[], [" ", ["[", "]"], ["\"", "\""]]], "into": "tokens"},
 			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
@@ -18,7 +20,8 @@
 		]
 	},
 	{
-		"type": "nginx",
+		"type": "nginx_access",
+		"lookups": ["/var/log/nginx/access.log"],
 		"jobs": [
 			{"action": "tokenize", "from": "log", "delimiters": [[], [" ", ["[", "]"], ["\"", "\""]]], "into": "tokens"},
 			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
@@ -29,6 +32,7 @@
 	}, 
 	{
 		"type": "ftp",	
+		"lookups": ["/var/log/xferlog"],
 		"jobs": [
 			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
 			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
@@ -39,6 +43,7 @@
 	},
 	{
 		"type": "dhcp",
+		"lookups": ["/var/log/dhcpd.log"],
 		"jobs": [
 			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
 			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
@@ -49,6 +54,7 @@
 	},
 	{
 		"type": "dns",
+		"lookups": ["/var/log/named.log"],
 		"jobs": [
 			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
 			{"action": "flatten", "from": "tokens", "infinity": true, "into": "tokens"},
@@ -59,6 +65,7 @@
 	},
 	{
 		"type": "mysql",
+		"lookups": ["/var/log/mysql/mysql.log"],
 		"jobs": [
 			{"action": "tokenize", "from": "log", "delimiters": [[], [" "]], "into": "tokens"},
 			{"action": "analyze", "from": "tokens", "properties": ["iso8601_datepart", "iso8601_timepart", "thread_id", "mysql_event_type"], "into": "data"},
@@ -68,6 +75,7 @@
 	},
 	{
 		"type": "ssh",
+		"lookups": ["/var/log/auth.log"],
 		"jobs": [
 			{"action": "set", "values": {"data": {}}},
 			{"action": "derive", "from": "log", "property": "ssh_log", "into": "data"},

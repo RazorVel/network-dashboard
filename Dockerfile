@@ -59,6 +59,7 @@ RUN --mount=type=bind,source=./src/package.json,target=package.json \
 # Copy the rest of the source files into the image.
 COPY ./src .
 COPY ./data ./data
+COPY ./test ./test
 
 # Set config dir
 ENV NODE_CONFIG_DIR ./config

@@ -6,10 +6,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default {
-    entry: "./app/index.js", //Entry point for your application
+    entry: { //Entry point for your application
+        index: "./app/index.js", 
+        field: "./app/field.js",
+        parser: "./app/parser.js"
+    },
     output: {
         path: path.resolve(__dirname, "dist"),
-        filename: "bundle.js",
+        filename: "[name].bundle.js",
     },
     module: {
         rules: [
@@ -19,6 +23,14 @@ export default {
                 use: {
                     loader: "babel-loader",
                 },
+            },
+            {
+                test: /\.css$/,
+                use: [
+                    "style-loader",
+                    "css-loader",
+                    "postcss-loader",
+                ],
             },
         ],
     },

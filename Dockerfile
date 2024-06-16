@@ -78,5 +78,9 @@ RUN chown root ./entrypoint.sh && \
 # Run the application as a non-root user.
 # USER node 
 
+# Build the front-end application using webpack
+RUN npm run build:frontend
+RUN mkdir -p ./app/dist && mv ./app/views/* ./app/views/.* ./app/dist 2>/dev/null || true && rm -r ./app/views
+
 # Run the application.
 ENTRYPOINT ["./entrypoint.sh"];

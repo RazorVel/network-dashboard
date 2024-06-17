@@ -10,18 +10,22 @@ const controllers = {};
 const parser = new LogParser();
 
 controllers.logUpload = async function (req, res, next) {
-    const { type } = req.query;
-
-    let lines = req.body.split("\n");
-    lines.pop();
-
-    type && (lines = lines.map((line) => ({
-        _type: type, 
-        _log: line,
-        ...parser.parse(type, line)
-    })));
-
     try {
+        const { type } = req.query;
+
+        if (typeof req.body != "string") {
+            throw new Error("Invalid payload data!");
+        }
+
+        let lines = req.body.split("\n");
+        lines.pop();
+
+        type && (lines = lines.map((line) => ({
+            _type: type, 
+            _log: line,
+            ...parser.parse(type, line)
+        })));
+
         await client.connect();
 
         const collection = db.collection("logs");

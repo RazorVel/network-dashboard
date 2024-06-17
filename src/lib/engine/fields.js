@@ -10,12 +10,14 @@ export let mergeFields = function (patterns, format, derivatives) {
         return p1 ? '(?:' : match;
     });
     
-    let pattern = new RegExp(format.replace(/{(\d+)}/g, (match, number) => patterns[derivatives[number]] ? `(${toNonCapturing(patterns[derivatives[number]].pattern.source)})` : match ));
+    let pattern = new RegExp(format.replace(/{(\d+)}/g, (match, number) => patterns[derivatives[number]] ? `(${toNonCapturing(patterns[derivatives[number]].pattern.source)})` : `\\{${number}\\}` ));
     
     return {pattern, derivatives};
 };
 
 export let fields = {};
+
+export let fieldsData = [];
 
 export let reloadFields = async function () {
     try {
@@ -23,11 +25,12 @@ export let reloadFields = async function () {
 
         const collection = db.collection("fields");
 
-        fields = await (await collection.find()).toArray();
-        fields = fields.reduce((fields, field) => {
+        fieldsData = await (await collection.find()).toArray();
+        fields = fieldsData.reduce((fields, field) => {
             fields[field.name] = {pattern: field.pattern, derivatives: field.derivatives};
             return fields;
         }, {});
+
 
         console.log("reloaded {...fields}");
     }

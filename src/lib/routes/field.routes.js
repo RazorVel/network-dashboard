@@ -5,5 +5,6 @@ const router = Router();
 
 router.get("/", controllers.field)
 router.post("/", json(), controllers.field);
+router.delete("/", json(), controllers.field);
 
 export default router;

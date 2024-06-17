@@ -13,22 +13,22 @@ controllers.parser = async function (req, res, next) {
     if (req.method === "GET") {
         const { option } = req.query;
     
-        if (option === "raw") {
-            try {
-                await client.connect();
-    
-                let collection = db.collection("parsers");
-                let data = await (await collection.find()).toArray();
-    
-                res.setHeader("Content-Type", "application/json");
-                res.send(JSON.stringify(data));
-            } catch (err) {
-                res.status(500).send({ message: "Error reading JSON file", error: err.message });
-            } finally {
-                await client.close();
+        try {
+            await client.connect();
+
+            let collection = db.collection("parsers");
+            let data = await (await collection.find()).toArray();
+
+            if (option === "raw") {
+                res.setHeader("Content-Type", "application/json").status(200).send(JSON.stringify(data));
             }
-        } else {
-            res.status(400).send("Invalid option");
+            else {
+                res.status(200).send({ message: "Parsers retrieved!", data });
+            }
+        } catch (err) {
+            res.status(500).send({ message: "Error reading JSON file", error: err.message });
+        } finally {
+            await client.close();
         }
     }
     else if (req.method === "POST") {
@@ -38,14 +38,19 @@ controllers.parser = async function (req, res, next) {
 
             const parsers = req.body;
 
+            let invalidReqBody = new Error("Request body should be an array of parser objects");
             if (!Array.isArray(parsers)) {
-                throw new Error("Request body should be an array of parser objects");
+                throw invalidReqBody;
             }
 
             // Validate parser properties
             let invalidDescription = new Error("Invalid parser object description");
             for (let parser of parsers) {
-                if (typeof parser.type != "string" || !(parser.jobs instanceof Array) || !(parser.lookups instanceof Array)) {
+                if (!(parser instanceof Object && parser.constructor == Object)) {
+                    throw invalidReqBody;
+                }
+
+                if ((parser._id !== undefined && typeof parser._id != "string") || typeof parser.type != "string" || !(parser.jobs instanceof Array) || !(parser.lookups instanceof Array)) {
                     throw invalidDescription;
                 }
 
@@ -86,6 +91,43 @@ controllers.parser = async function (req, res, next) {
             res.status(200).json({ message: "Parsers upserted successfully", result });
         } catch(err) {
             res.status(500).json({ message: "Error upserting parsers", error: err.message });
+        } finally {
+            await client.close();
+        }
+    }
+    else if (req.method === "DELETE") {
+        try {
+            await client.connect();
+            let collection = db.collection("parsers");
+
+            let parsers = req.body;
+
+            let invalidReqBody = new Error("Request body should be an array of parser objects");
+            if (!Array.isArray(parsers)) {
+                throw invalidReqBody;
+            }
+
+            for (let parser of parsers) {
+                if (!(parser instanceof Object && parser.constructor == Object)) {
+                    throw invalidReqBody;
+                }
+
+                if (typeof parser._id != "string") {
+                    throw new Error("Invalid parser id(s)");
+                }
+            }
+
+            const bulkOps = parsers.map(parser => ({
+                deleteOne: {
+                    filter: { _id: new ObjectId(parser._id) }
+                }
+            }))
+            
+            const result = await collection.bulkWrite(bulkOps);
+
+            res.status(200).json({ message: "Parser(s) deleted successfully", result });
+        } catch (err) {
+            res.status(500).json({ message: "Error deleting parsers", error: err.message });
         } finally {
             await client.close();
         }

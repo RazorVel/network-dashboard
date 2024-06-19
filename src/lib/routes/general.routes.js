@@ -20,7 +20,12 @@ export default function (app) {
     app.use("/field", fieldRouter);
     app.use("/log", logRouter);
 
-    app.use("/static", exStatic(path.join(__dirname, "../../app/dist")));
+    // serve static files from ../../app/dist
+    app.use("/client", exStatic(path.join(__dirname, "../../app/dist")));
+    // Redirect all /client requests to index.html
+    app.get("/client/*", (req, res) => {
+        res.sendFile(path.join(__dirname, "../../app/dist/index.html"));
+    })
 
     app.use(controllers.default);
 }

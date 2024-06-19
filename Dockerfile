@@ -80,7 +80,7 @@ RUN chown root ./entrypoint.sh && \
 
 # Build the front-end application using webpack
 RUN npm run build:frontend
-RUN mkdir -p ./app/dist && mv ./app/views/* ./app/views/.* ./app/dist 2>/dev/null || true && rm -r ./app/views
+RUN mkdir -p ./app/dist && mv ./app/index.html ./app/dist 2>/dev/null || true
 
 # Run the application.
 ENTRYPOINT ["./entrypoint.sh"];

@@ -7,9 +7,7 @@ const __dirname = path.dirname(__filename);
 
 export default {
     entry: { //Entry point for your application
-        index: "./app/index.js", 
-        field: "./app/field.js",
-        parser: "./app/parser.js"
+        index: "./app/index.js"
     },
     output: {
         path: path.resolve(__dirname, "dist"),

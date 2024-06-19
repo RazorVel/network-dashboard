@@ -1,5 +1,12 @@
 import React from "react";
+import classNames from "classnames";
 
-const FormLabel = ({ label }) => <label className="block text-gray-700">{label}</label>;
+const FormLabel = ({ 
+    className,
+    label,
+    ...props
+}) => (
+    <label className={classNames("block text-gray-700", className)} {...props}>{label}</label>
+);
 
 export default FormLabel;

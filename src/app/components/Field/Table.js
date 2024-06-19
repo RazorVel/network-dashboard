@@ -1,7 +1,9 @@
 import React from "react";
+import classNames from "classnames";
 import FormInput from "../Form/Input.js";
 
 const FieldTable = ({
+    className,
     data,
     search,
     onSearch,
@@ -9,6 +11,7 @@ const FieldTable = ({
     onDelete,
     onCreate,
     onMerge,
+    ...props
 }) => {
     const filteredData = data.filter((item) =>
         item.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -19,7 +22,7 @@ const FieldTable = ({
     filteredData.sort((x, y) => x.name.toLowerCase() <= y.name.toLowerCase() ? -1 : 1);
 
     return (
-        <div className="space-y-4">
+        <div className={classNames("space-y-4", className)} {...props}>
             <div className="flex justify-end mb-4 gap-5">
                 <button onClick={onMerge} className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Merge</button>
                 <button onClick={onCreate} className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Create</button>

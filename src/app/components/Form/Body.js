@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
+import classNames from "classnames";
 
-const Form = ({ initialData, formType, onSubmit, onRequestClose, children }) => {
+const Form = ({ 
+    className,
+    initialData, 
+    formType, 
+    onSubmit, 
+    onRequestClose, 
+    children,
+    ...props
+}) => {
     let [ isValid, setIsValid ] = useState(false);
     let [ invalidReason, setInvalidReason ] = useState("");
     
@@ -147,7 +156,7 @@ const Form = ({ initialData, formType, onSubmit, onRequestClose, children }) => 
     const childrenWithProps = addPropsToChildren(children);
 
     return (
-        <div className="space-y-4">
+        <div className={classNames("space-y-4", className)} {...props}>
             {childrenWithProps}
 
             {!isValid && invalidReason && (
@@ -155,10 +164,10 @@ const Form = ({ initialData, formType, onSubmit, onRequestClose, children }) => 
             )}
 
             {isValid && (
-                <button onClick={handleSubmit} className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Submit</button>
+                <button onClick={handleSubmit} className="w-full bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Submit</button>
 
             ) || (
-                <button className="bg-gray-500 text-white px-4 py-2 rounded shadow" disabled>Submit</button>
+                <button className="w-full bg-gray-500 text-white px-4 py-2 rounded shadow" disabled>Submit</button>
             )}
         </div>
     );

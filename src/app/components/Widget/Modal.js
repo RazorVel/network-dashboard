@@ -51,11 +51,11 @@ const Modal = ({
 
     return ReactDOM.createPortal(
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300">
-            <div ref={modalRef} className="bg-white p-6 rounded-lg shadow-lg relative min-w-64 min-h-40 max-w-[80%] max-h-[80%] w-[40rem] resize" style={{ overflow: 'auto' }}>
+            <div ref={modalRef} className="flex flex-col bg-white p-6 rounded-lg shadow-lg relative min-w-64 min-h-40 max-w-[80%] max-h-[80%] w-[40rem] resize" style={{ overflow: 'auto' }}>
                 <button onClick={onRequestClose} className="absolute top-1 right-4 text-3xl text-gray-500 hover:text-gray-700 transition-colors duration-300">×</button>
                 <h1 className="text-3xl">{title}</h1>
                 <hr className="border border-black mb-4"/>
-                <div>{children}</div>
+                <div className="flex-[1]">{children}</div>
                 <div className="resize-handle absolute bottom-0 right-0 w-4 h-4 cursor-se-resize"></div>
             </div>
         </div>

@@ -1,15 +1,18 @@
 import React from "react";
+import classNames from "classnames";
 import FormInput from "../Form/Input.js";
 import { Prism as SyntaxHighlighter} from "react-syntax-highlighter";
 import { coy } from "react-syntax-highlighter/dist/esm/styles/prism/index.js";
 
 const ParserTable = ({
+    className,
     data,
     search,
     onSearch,
     onModify,
     onDelete,
     onCreate,
+    ...props
 }) => {
 
     const filteredData = data.filter((item) => 
@@ -21,7 +24,7 @@ const ParserTable = ({
     filteredData.sort((x, y) => x.type.toLowerCase() <= y.type.toLowerCase() ? -1 : 1);
 
     return (
-        <div className="space-y-4">
+        <div className={classNames("space-y-4", className)} {...props}>
             <div className="flex justify-end mb-4 gap-5">
                 <button onClick={onCreate} className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Create</button>
                 <FormInput

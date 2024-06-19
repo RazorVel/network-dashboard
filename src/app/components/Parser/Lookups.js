@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Modal from "./Modal.js";
-import Form from "./Forms/Form.js";
-import FieldTable from "./FieldTable.js";
-import FormLabel from "./Forms/FormLabel.js";
-import FormInput from "./Forms/FormInput.js";
+import Modal from "../Widget/Modal.js";
+import Form from "../Form/Body.js";
+import FormLabel from "../Form/Label.js";
+import FormInput from "../Form/Input.js";
+import ParserTable from "./Table.js";
 
-const FieldLookups = () => {
+const ParserLookups = () => {
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
     const [formModalIsOpen, setFormModalIsOpen] = useState(false);
@@ -18,14 +18,14 @@ const FieldLookups = () => {
     const [actionType, setActionType] = useState(null);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get("/field?option=raw");
+        const fetchData = async() => {
+            try{
+                const response = await axios.get("/parser?option=raw");
                 setData(response.data);
-            } catch (error) {
-                showServerResponse = (error?.response || error);
+            } catch(error) {
+                showServerResponse(error?.response || error);
             }
-        };
+        }
 
         fetchData();
     }, []);
@@ -51,7 +51,7 @@ const FieldLookups = () => {
 
         setResponseModalIsOpen(true);
     };
-
+    
     const handleSearch = (event) => {
         setSearch(event.target.value);
     };
@@ -60,40 +60,34 @@ const FieldLookups = () => {
         setFormData(null);
         setFormModalIsOpen(true);
         setActionType("create");
-    };
+    }
 
     const handleModify = (item) => {
         setFormData(item);
         setFormModalIsOpen(true);
         setActionType("modify");
-    };
-
-    const handleMerge = (item) => {
-        setFormData(null);
-        setFormModalIsOpen(true);
-        setActionType("merge");
-    };
+    }
 
     const handleDelete = async (id) => {
         try {
-            const response = await axios.delete("/field", {
+            const response = await axios.delete("/parser", {
                 data: [{ _id: id }],
             });
             showServerResponse(response);
             // Reload data
-            const updatedData = await axios.get("/field?option=raw");
+            const updatedData = await axios.get("/parser?option=raw");
             setData(updatedData.data);
         } catch (error) {
             showServerResponse(error?.response || error);
         }
     };
-    
+
     const handleSubmit = async (item) => {
         try {
-            const response = await axios.post("/field", [item]);
+            const response = await axios.post("/parser", [item]);
             showServerResponse(response);
             // Reload data
-            const updatedData = await axios.get("/field?option=raw");
+            const updatedData = await axios.get("/parser?option=raw");
             setData(updatedData.data);
         } catch (error) {
             showServerResponse(error?.response || error);
@@ -102,14 +96,13 @@ const FieldLookups = () => {
 
     return (
         <div>
-            <FieldTable className="container mx-auto p-4"
+            <ParserTable className="container mx-auto p-4"
                 data={data}
                 search={search}
                 onSearch={handleSearch}
                 onModify={handleModify}
                 onDelete={handleDelete}
                 onCreate={handleCreate}
-                onMerge={handleMerge}
             />
             <Modal
                 title={actionType}
@@ -118,34 +111,16 @@ const FieldLookups = () => {
             >
                 <Form
                     initialData={formData}
-                    formType={"field"}
+                    formType={("parser")}
                     onSubmit={handleSubmit}
                     onRequestClose={() => setFormModalIsOpen(false)}
                 >
-                    
-                    {["create", "modify", "merge"].includes(actionType) && (
-                        <>
-                        <FormLabel label="Name" />
-                        <FormInput name="name" />
-                        </>
-                    )}
-
-                    {["create", "modify"].includes(actionType) && (
-                        <>
-                        <FormLabel label="Pattern" />
-                        <FormInput name="pattern" />
-                        </>
-                    )}
-
-                    {["merge"].includes(actionType) && (
-                        <>
-                        <FormLabel label="Macro" />
-                        <FormInput name="pattern" />
-                        <FormLabel label="Derivatives" />
-                        <FormInput name="derivatives" />
-                        </>
-                    )}
-                    
+                    <FormLabel label="Type"/>
+                    <FormInput name="type"/>
+                    <FormLabel label="Lookups"/>
+                    <FormInput name="lookups"/>
+                    <FormLabel label="Jobs"/>
+                    <FormInput type="code-editor" name="jobs"/>
                 </Form>
             </Modal>
             <Modal
@@ -168,7 +143,7 @@ const FieldLookups = () => {
                 )}
             </Modal>
         </div>
-    );
-};
+    )
+}
 
-export default FieldLookups;
+export default ParserLookups;

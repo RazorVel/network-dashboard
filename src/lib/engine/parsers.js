@@ -51,7 +51,7 @@ export let parse = function (parser, log) {
             actionResult = tokenize(get(job.from), job.delimiters)
         }
         else if (job.action == "flatten") {
-            actionResult = get(job.from)?.flat(job.infinity ? Infinity : (job.depth || 0));
+            actionResult = get(job.from)?.flat(job.infinity ? Infinity : (job.depth || 1));
         }
         else if (job.action == "analyze") {
             actionResult = analyze(get(job.from), job.properties);

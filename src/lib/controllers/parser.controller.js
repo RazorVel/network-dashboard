@@ -38,33 +38,93 @@ controllers.parser = async function (req, res, next) {
 
             const parsers = req.body;
 
-            let invalidReqBody = new Error("Request body should be an array of parser objects");
             if (!Array.isArray(parsers)) {
-                throw invalidReqBody;
+                throw new Error("Request payload must be an array");
             }
 
             // Validate parser properties
-            let invalidDescription = new Error("Invalid parser object description");
             for (let parser of parsers) {
                 if (!(parser instanceof Object && parser.constructor == Object)) {
-                    throw invalidReqBody;
+                    throw new Error("Parser must be an object");
                 }
 
-                if ((parser._id !== undefined && typeof parser._id != "string") || typeof parser.type != "string" || !(parser.jobs instanceof Array) || !(parser.lookups instanceof Array)) {
-                    throw invalidDescription;
+                if (parser._id !== undefined && typeof parser._id != "string") {
+                    throw new Error("parser._id must be of type string, if defined");
                 }
-
-                for (let job of parser.jobs) {
-                    if (!(job instanceof Object && job.constructor == Object)) {
-                        throw invalidDescription;
-                    }
+                if (typeof parser.type != "string") {
+                    throw new Error("parser.type must be a string");
+                }
+                if (!(parser.jobs instanceof Array)) {
+                    throw new Error("parser.jobs must be an array");
+                }
+                if (!(parser.lookups instanceof Array)) {
+                    throw new Error("parser.lookups must be an array");
                 }
 
                 for (let lookup of parser.lookups) {
                     if (typeof lookup != "string") {
-                        throw invalidDescription;
+                        throw new Error("Lookup must be a string");
                     }
                 }
+                
+                // Validate jobs
+                const validActions = ["set", "tokenize", "flatten", "analyze", "derive", "return"];
+                const fromDependants = validActions.slice(1);
+                const valuePasser = validActions.slice(1, -1);
+                for (let job of parser.jobs) {
+                    if (!(job instanceof Object && job.constructor == Object)) {
+                        throw new Error("Job must be an object");
+                    }
+
+                    if (!validActions.includes(job.action)) {
+                        throw new Error(`Invalid action: ${job.action}`);
+                    }
+
+                    if (job.check && !(job.check instanceof Object && job.check.constructor == Object)) {
+                        throw new Error("Check: conditions must be an object");
+                    }
+                    
+                    if (job.action === "set" && !(job.values instanceof Object && job.values.constructor == Object)) {
+                        throw new Error("Set: 'values' property must be an object");
+                    }
+
+                    if (fromDependants.includes(job.action)) {
+                        if (!job.from) {
+                            throw new Error(`${job.action}: requires 'from' property`);
+                        }
+                        if (typeof job.from != "string"){
+                            throw new Error(`${job.action}: 'from' property must be a string`);
+                        }
+                    }
+
+                    if (job.action === "tokenize" && !Array.isArray(job.delimiters)) {
+                        throw new Error("Tokenize: 'delimiters' property must be an array");
+                    }
+
+                    if (job.action === "flatten" && job.infinity !== undefined && typeof job.infinity !== "boolean") {
+                        throw new Error("Flatten: 'infinity' property must be a boolean, if defined");
+                    }
+
+                    if (job.action === "analyze") {
+                        if (!Array.isArray(job.properties)) {
+                            throw new Error("Analyze: 'properties' property must be an array");
+                        }
+                        for (let property of job.properties) {
+                            if (typeof property != "string") {
+                                throw new Error("Analyze: 'properties' must consists only of strings")
+                            }
+                        }
+                    }
+
+                    if (job.action === "derive" && typeof job.property != "string") {
+                        throw new Error("Derive: 'property' property must be a string");
+                    }
+
+                    if (valuePasser.includes(job.action) && job.into !== undefined && typeof job.into != "string") {
+                        throw new Error(`${job.action}: 'from' property must be a string, if defined`);
+                    }
+                }
+                
             }
 
             const bulkOps = parsers.map(parser => ({

@@ -1,4 +1,5 @@
 import React from "react";
+import FormInput from "../Form/Input.js";
 
 const FieldTable = ({
     data,
@@ -22,12 +23,11 @@ const FieldTable = ({
             <div className="flex justify-end mb-4 gap-5">
                 <button onClick={onMerge} className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Merge</button>
                 <button onClick={onCreate} className="bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Create</button>
-                <input
+                <FormInput 
                     type="text"
                     placeholder="Search..."
                     value={search}
                     onChange={onSearch}
-                    className="p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
                 />
             </div>
             <div className="overflow-x-auto">

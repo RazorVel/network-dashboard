@@ -43,27 +43,36 @@ controllers.field = async function (req, res, next) {
 
             let fields = req.body;
 
-            console.log(fields);
-
-            let invalidReqBody = new Error("Request body should be an array of field objects");
             if (!Array.isArray(fields)) {
-                throw invalidReqBody;
+                throw new Error("Request payload must be an array");
             }
 
             // Validate field properties
-            let invalidDescription = new Error("Invalid field object description");
             for (let field of fields) {
                 if (!(field instanceof Object && field.constructor == Object)) {
-                    throw invalidReqBody;
+                    throw new Error("Field must be an object");
                 }
 
-                if ((field._id !== undefined && typeof field._id != "string") || typeof field.name != "string" || !(field.derivatives instanceof Array) || typeof field.pattern != "string") {
-                    throw invalidDescription;
+                if (field._id !== undefined && typeof field._id != "string") {
+                    throw new Error("field._id is not of type string, if defined");
                 }
+                
+                if (typeof field.name != "string") {
+                    throw new Error("field.name must be a string");
+                }
+
+                if (!(field.derivatives instanceof Array)) {
+                    throw new Error("field.derivatives must be a collection of strings");
+                }
+
+                if (typeof field.pattern != "string") {
+                    throw new Error("field.pattern must be a string");
+                }
+
 
                 for (let derivative of field.derivatives) {
                     if (typeof derivative != "string") {
-                        throw invalidDescription;
+                        throw new Error("Derivative must be a string");
                     }
 
                     if (field.name === derivative) {

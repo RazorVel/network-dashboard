@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import App from "./components/App.js";
+import ParserLookups from "./components/Parser/Lookups.js";
 import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
     <React.StrictMode>
-        <App />
+        <ParserLookups/>
     </React.StrictMode>
 );

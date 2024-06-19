@@ -29,7 +29,17 @@ controllers.logUpload = async function (req, res, next) {
         await client.connect();
 
         const collection = db.collection("logs");
-        const result = await collection.insertMany(lines);
+
+        // Create bulk operations for upserting logs
+        const bulkOps = lines.map(line => ({
+            updateOne: {
+                filter: {_type: line._type, _log: line._log},
+                update: { $setOnInsert: line },
+                upsert: true
+            }
+        }));
+
+        const result = await collection.bulkWrite(bulkOps);
         
         res.status(200).send({ message: "Log received by server", result });
     } catch (err) {

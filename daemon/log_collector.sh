@@ -7,6 +7,7 @@ SYMLINK_DIR="${LOG_DIR}/symlink"
 STATE_FILE="${LOG_DIR}/processed_files.state"
 TMP_FOLDER="/tmp/network_dashboard"
 WHITELIST_FILE="/etc/network_dashboard/path_whitelist"
+INTERVAL=5
 
 # Ensure the log dir exists
 mkdir -p "$LOG_DIR"
@@ -142,6 +143,15 @@ process_logs() {
         last_line=$(grep -F "$log_file" "$STATE_FILE" 2>/dev/null | cut -d ' ' -f 2)
         last_line=${last_line:-0}
 
+        # Get the current number of lines in the log file
+        current_line_count=$(wc -l < "$log_file")
+
+        # If last_line is greater than current_line_count, reset last_line to 0
+        if [[ "$last_line" -gt "$current_line_count" ]]; then
+            escaped_log_file=$(escape_sed "$log_file")
+            sed -i "/^$escaped_log_file/d" "$STATE_FILE"
+        fi
+
         # Extract new log entries
         tail -n +$((last_line + 1)) "$log_file" > "$temp_file"
 
@@ -158,7 +168,7 @@ process_logs() {
 while true; do
     get_log_files | process_logs
     if [[ $? -ne 0 ]]; then
-        echo "Error: Failed to process logs. Retrying in 60 seconds..." >&2
+        echo "Error: Failed to process logs. Retrying in $INTERVAL seconds..." >&2
     fi
-    sleep 60 # Adjust the interval as method
+    sleep "${INTERVAL:-10}" # Adjust the interval as method
 done

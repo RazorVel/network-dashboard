@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import classNames from "classnames";
 import axios from "axios";
 import Modal from "../../components/Widget/Modal.js";
@@ -6,11 +6,13 @@ import Form from "../../components/Form/Body.js";
 import FormLabel from "../../components/Form/Label.js";
 import FormInput from "../../components/Form/Input.js";
 import ParserTable from "../../components/Parser/Table.js";
+import { AppContext } from "../../context.js";
 
 const ParserLookups = ({
     className,
     ...props
 }) => {
+    const { setIsLoading } = useContext(AppContext);
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
     const [formModalIsOpen, setFormModalIsOpen] = useState(false);
@@ -23,11 +25,14 @@ const ParserLookups = ({
 
     useEffect(() => {
         const fetchData = async() => {
-            try{
+            try {
+                setIsLoading(true);
                 const response = await axios.get("/parser?option=raw");
                 setData(response.data);
-            } catch(error) {
+            } catch (error) {
                 showServerResponse(error?.response || error);
+            } finally {
+                setIsLoading(false);
             }
         }
 
@@ -74,6 +79,7 @@ const ParserLookups = ({
 
     const handleDelete = async (id) => {
         try {
+            setIsLoading(true);
             const response = await axios.delete("/parser", {
                 data: [{ _id: id }],
             });
@@ -83,11 +89,14 @@ const ParserLookups = ({
             setData(updatedData.data);
         } catch (error) {
             showServerResponse(error?.response || error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleSubmit = async (item) => {
         try {
+            setIsLoading(true);
             const response = await axios.post("/parser", [item]);
             showServerResponse(response);
             // Reload data
@@ -95,6 +104,8 @@ const ParserLookups = ({
             setData(updatedData.data);
         } catch (error) {
             showServerResponse(error?.response || error);
+        } finally {
+            setIsLoading(false);
         }
     };
 

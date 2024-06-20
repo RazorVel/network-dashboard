@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import classNames from "classnames";
 import axios from "axios";
 import Modal from "../../components/Widget/Modal.js";
@@ -6,11 +6,13 @@ import Form from "../../components/Form/Body.js";
 import FieldTable from "../../components/Field/Table.js";
 import FormLabel from "../../components/Form/Label.js";
 import FormInput from "../../components/Form/Input.js";
+import { AppContext } from "../../context.js";
 
 const FieldLookups = ({
     className,
     ...props
 }) => {
+    const { setIsLoading } = useContext(AppContext);
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
     const [formModalIsOpen, setFormModalIsOpen] = useState(false);
@@ -24,10 +26,13 @@ const FieldLookups = ({
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setIsLoading(true);
                 const response = await axios.get("/field?option=raw");
                 setData(response.data);
             } catch (error) {
                 showServerResponse(error?.response || error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
@@ -80,6 +85,7 @@ const FieldLookups = ({
 
     const handleDelete = async (id) => {
         try {
+            setIsLoading(true);
             const response = await axios.delete("/field", {
                 data: [{ _id: id }],
             });
@@ -89,11 +95,14 @@ const FieldLookups = ({
             setData(updatedData.data);
         } catch (error) {
             showServerResponse(error?.response || error);
+        } finally {
+            setIsLoading(false);
         }
     };
     
     const handleSubmit = async (item) => {
         try {
+            setIsLoading(true);
             const response = await axios.post("/field", [item]);
             showServerResponse(response);
             // Reload data
@@ -101,6 +110,8 @@ const FieldLookups = ({
             setData(updatedData.data);
         } catch (error) {
             showServerResponse(error?.response || error);
+        } finally {
+            setIsLoading(false);
         }
     };
 

@@ -2,6 +2,7 @@ import path from "path";
 import { fileURLToPath } from "url";
 import LogParser from "../engine/logParser.js";
 import { client, db } from "../models/db.js";
+import { ObjectId } from "mongodb";
 
 let __filename = fileURLToPath(import.meta.url);
 let __dirname = path.dirname(__filename);
@@ -49,5 +50,22 @@ controllers.logUpload = async function (req, res, next) {
     }
 
 }
+
+controllers.getLog = async function (req, res, next) {
+    try {
+        req.query._id && (req.query._id = new ObjectId(req.query._id));
+
+        await client.connect();
+        const collection = db.collection("logs");
+
+        let data = await (await collection.find(req.query)).toArray();
+
+        res.status(200).send({ message: "Logs retrieved!", data });
+    } catch (err) {
+        res.status(500).send({ message: "Error retrieving log data", error: err.message });
+    } finally {
+        await client.close();
+    }
+};
 
 export default controllers;

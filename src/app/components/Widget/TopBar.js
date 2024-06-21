@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import classNames from "classnames";
 
-const TopBar = ({
+export const TopBar = ({
     className,
     ...props
 }) => {

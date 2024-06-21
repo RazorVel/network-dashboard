@@ -4,6 +4,7 @@ import path from "path"
 import parserRouter from "./parser.routes.js";
 import logRouter from "./log.routes.js";
 import fieldRouter from "./field.routes.js";
+import sseRouter from "./sse.routes.js";
 import controllers from "../controllers/general.controller.js";
 
 //Helper to get the directory name
@@ -19,6 +20,7 @@ export default function (app) {
     app.use("/parser", parserRouter);
     app.use("/field", fieldRouter);
     app.use("/log", logRouter);
+    app.use("/sse", sseRouter);
 
     // serve static files from ../../app/dist
     app.use("/client", exStatic(path.join(__dirname, "../../app/dist")));

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import ReactDOM from "react-dom";
 
-const Modal = ({ 
+export const Modal = ({ 
     title, 
     isOpen, 
     onRequestClose, 

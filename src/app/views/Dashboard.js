@@ -1,8 +1,13 @@
+import { AppContext } from "../context.js";
 import React, { useState, useEffect, useContext } from "react";
+import RGL, { WidthProvider } from "react-grid-layout";
 import classNames from "classnames";
 import axios from "axios";
-import Modal from "../components/Widget/Modal.js";
-import { AppContext } from "../context.js";
+import Modal from "../components/Media/Modal.js";
+import DynamicLayout from "../components/Media/DynamicLayout.js";
+import "react-grid-layout/css/styles.css";
+import "react-resizable/css/styles.css";
+
 
 const Dashboard = ({
     className,
@@ -47,6 +52,12 @@ const Dashboard = ({
 
     return (
         <div className={classNames(className)} {...props}>
+            <DynamicLayout>
+                <div className="bg-red-300 h-full w-full"></div>
+                <div className="bg-green-300 h-full w-full"></div>
+                <div className="bg-blue-300 h-full w-full"></div>
+            </DynamicLayout>
+
             <Modal  
                 title={"Server Response"}
                 isOpen={responseModalIsOpen}

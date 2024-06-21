@@ -5,7 +5,7 @@ import { SlGraph as Graph } from "react-icons/sl";
 import { LuRegex as Regex } from "react-icons/lu";
 import { PiFlaskBold as Flask } from "react-icons/pi";
 
-const Navigation = ({
+export const Navigation = ({
     className,
     ...props
 }) => {

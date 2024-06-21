@@ -1,15 +1,15 @@
+import {AppContext} from "./context.js";
 import React, {useState} from "react";
+import ReactLoading from "react-loading";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { PiSunHorizonDuotone as Sun, PiMoonStarsBold as Moon } from "react-icons/pi";
 import classNames from "classnames";
 import Navigation from "./components/Widget/Navigation.js";
-import FieldLookups from "./views/Field/Lookups.js";
-import ParserLookups from "./views/Parser/Lookups.js";
+import FieldLookups from "./views/FieldConfig.js";
+import ParserLookups from "./views/ParserConfig.js";
 import Dashboard from "./views/Dashboard.js";
 import NotFound from "./views/NotFound.js";
 import TopBar from "./components/Widget/TopBar.js";
-import {AppContext} from "./context.js";
-import ReactLoading from "react-loading";
 
 const override = {
     display: "block",
@@ -32,10 +32,10 @@ const App = ({
                 <div className="flex h-full w-full fixed top-8 bottom-0 overflow-y-scroll">
                     <Navigation className="sticky top-0"/>
                     <Routes>
-                        <Route path="/client/" element={<Dashboard className="flex-[1]"/>} />
-                        <Route path="/client/field" element={<FieldLookups className="flex-[1]"/>} />
-                        <Route path="/client/parser" element={<ParserLookups className="flex-[1]"/>} />
-                        <Route path="/client/*" element={<NotFound className="flex-[1]"/>} />
+                        <Route path="/client/" element={<Dashboard className="flex-[1] pb-8 h-fit"/>} />
+                        <Route path="/client/field" element={<FieldLookups className="flex-[1] pb-8 h-fit"/>} />
+                        <Route path="/client/parser" element={<ParserLookups className="flex-[1] pb-8 h-fit"/>} />
+                        <Route path="/client/*" element={<NotFound className="flex-[1] pb-8 h-fit"/>} />
                     </Routes>
                 </div>
 

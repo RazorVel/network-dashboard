@@ -24,12 +24,12 @@ export const DynamicLayout = ({
             {React.Children.map(children, (child, i) => (
                 <div 
                     key={i} 
-                    className="w-full h-full bg-gray-200 drop-shadow shadow-black rounded-md overflow-hidden"
+                    className="w-full h-full bg-gray-200 drop-shadow-lg shadow-black rounded-md overflow-hidden"
                     data-grid={{
-                        x: 0, //Start at the first column
-                        y: i, //Place each item in a new row
-                        w: cols, //Span all columns
-                        h: 1, //Initial height (can be adjusted)
+                        x: child.props.x || 0, //Start at the first column
+                        y: child.props.y || i, //Place each item in a new row
+                        w: child.props.w || cols, //Span all columns
+                        h: child.props.h || 1, //Initial height (can be adjusted)
                         i: i.toString(),
                         resizeHandles: availableHandles
                     }}

@@ -52,10 +52,11 @@ const Dashboard = ({
 
     return (
         <div className={classNames(className)} {...props}>
-            <DynamicLayout>
-                <div className="bg-red-300 h-full w-full"></div>
-                <div className="bg-green-300 h-full w-full"></div>
-                <div className="bg-blue-300 h-full w-full"></div>
+            <DynamicLayout cols={20} rowHeight={30}>
+                <div className="h-full w-full" h={2} w={20}></div>
+                <div className="h-full w-full" h={10} w={4} x={17}></div>
+                <div className="h-full w-full" h={5} w={16}></div>
+                <div className="h-full w-full" h={5} w={16}></div>
             </DynamicLayout>
 
             <Modal  

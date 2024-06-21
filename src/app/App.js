@@ -1,5 +1,5 @@
 import {AppContext} from "./context.js";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import ReactLoading from "react-loading";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { PiSunHorizonDuotone as Sun, PiMoonStarsBold as Moon } from "react-icons/pi";
@@ -23,9 +23,53 @@ const App = ({
     ...props
 }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [logCache, setLogCache] = useState([]);
+
+    useEffect(() => {
+        const createEventSource = () => {
+            console.log("Connecting SSE...");
+            let eventSource = new EventSource("/sse");
+            setLogCache([]);
+    
+            eventSource.onmessage = (event) => {
+                try{
+                    const data = JSON.parse(event.data);
+                    
+                    if (!(data instanceof Array)){
+                        throw new Error("Log cache is of type", typeof data, "(Expected Array)");
+                    } 
+    
+                    setLogCache(data.concat(logCache));
+                } catch (err) {
+                    console.error(err);
+                }
+            }
+    
+            eventSource.onerror = (err) => {
+                console.error("EventSource failed:", err);
+
+                if (eventSource.readyState === EventSource.CONNECTING) {
+                    console.log("Reconnecting SSE...");
+                }
+                if (eventSource.readyState === EventSource.CLOSED) {
+                    console.log("Reinitializing SSE...");
+                    eventSource.close();
+                    setTimeout(createEventSource, 1000);
+                }
+            }
+
+            return eventSource;
+        }
+
+        const eventSource = createEventSource();
+
+        return () => {
+            eventSource.close();
+        }
+    }, []);
 
     return (
-        <AppContext.Provider value={{isLoading, setIsLoading}}>
+        <AppContext.Provider value={{isLoading, setIsLoading, logCache, setLogCache}}>
         <Router>
             <div className={classNames(className)} {...props}>
                 <TopBar className="sticky z-10 top-0"/>

@@ -13,6 +13,11 @@
 
     CONFIGURATION_DIR="/etc/network_dashboard"
 
+    # Make sure that the service working directory exist
+    WORKING_DIR="/var/log/network_dashboard"
+    echo "Create working directory $WORKING_DIR"
+    sudo mkdir -p "$WORKING_DIR"
+
     # Copy the script to /usr/local/bin and make it executable
     echo "Copying $SCRIPT_NAME to $TARGET_SCRIPT_PATH"
     sudo cp "$SOURCE_DIR/$SCRIPT_NAME" "$TARGET_SCRIPT_PATH"

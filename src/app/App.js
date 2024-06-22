@@ -1,5 +1,5 @@
-import {AppContext} from "./context.js";
-import React, {useEffect, useState} from "react";
+import {AppContext, DashboardContext} from "./context.js";
+import React, {useContext, useEffect, useState, useRef} from "react";
 import ReactLoading from "react-loading";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { PiSunHorizonDuotone as Sun, PiMoonStarsBold as Moon } from "react-icons/pi";
@@ -24,11 +24,14 @@ const App = ({
 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [logCache, setLogCache] = useState([]);
-
+    const [isStreamPaused, setIsStreamPaused] = useState(false);
+    const eventSourceRef = useRef(null);
+    
     useEffect(() => {
         const createEventSource = () => {
             console.log("Connecting SSE...");
             let eventSource = new EventSource("/sse");
+            let previousLogCache = logCache;
             setLogCache([]);
     
             eventSource.onmessage = (event) => {
@@ -39,13 +42,14 @@ const App = ({
                         throw new Error("Log cache is of type", typeof data, "(Expected Array)");
                     } 
     
-                    setLogCache(data.concat(logCache));
+                    setLogCache((logCache) => data.concat(logCache));
                 } catch (err) {
                     console.error(err);
                 }
             }
     
             eventSource.onerror = (err) => {
+                setLogCache(previousLogCache);
                 console.error("EventSource failed:", err);
 
                 if (eventSource.readyState === EventSource.CONNECTING) {
@@ -54,22 +58,29 @@ const App = ({
                 if (eventSource.readyState === EventSource.CLOSED) {
                     console.log("Reinitializing SSE...");
                     eventSource.close();
-                    setTimeout(createEventSource, 1000);
+                    setTimeout(createEventSource, 3000);
                 }
             }
 
-            return eventSource;
+            eventSourceRef.current = eventSource;
         }
 
-        const eventSource = createEventSource();
+
+        if (!isStreamPaused) {
+            createEventSource();
+        } else if (eventSourceRef.current) {
+            eventSourceRef.current.close();
+        }
 
         return () => {
-            eventSource.close();
+            if (eventSourceRef.current) {
+                eventSourceRef.current.close();
+            }
         }
-    }, []);
+    }, [isStreamPaused]);
 
     return (
-        <AppContext.Provider value={{isLoading, setIsLoading, logCache, setLogCache}}>
+        <AppContext.Provider value={{isLoading, setIsLoading, logCache, setLogCache, isStreamPaused, setIsStreamPaused}}>
         <Router>
             <div className={classNames(className)} {...props}>
                 <TopBar className="sticky z-10 top-0"/>

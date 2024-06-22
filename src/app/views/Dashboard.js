@@ -7,34 +7,20 @@ import Modal from "../components/Media/Modal.js";
 import DynamicLayout from "../components/Media/DynamicLayout.js";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-
+import LogStack from "../components/Widget/LogStack.js";
+import Controls from "../components/Widget/Controls.js";
 
 const Dashboard = ({
     className,
     ...props
 }) => {
     const { setIsLoading } = useContext(AppContext);
-    const [data, setData] = useState([]);
+
+    const [isStreamPaused, setIsStreamPaused] = useState(false);
     const [responseModalIsOpen, setResponseModalIsOpen] = useState(false);
     const [responseStatus, setResponseStatus] = useState(null);
     const [responseMessage, setResponseMessage] = useState("");
     const [responseDetail, setResponseDetail] = useState(null);
-
-    useEffect(() => {
-        const fetchData = async() => {
-            try {
-                setIsLoading(true);
-                const response = await axios.get("/log");
-                setData(response.data.data);
-            } catch (error) {
-                showServerResponse(error?.response || error);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-
-        fetchData();
-    }, []);
 
     const showServerResponse = (response) => {
         setResponseStatus(response?.status);
@@ -53,10 +39,11 @@ const Dashboard = ({
     return (
         <div className={classNames(className)} {...props}>
             <DynamicLayout cols={20} rowHeight={30}>
-                <div className="h-full w-full" h={2} w={20}></div>
-                <div className="h-full w-full" h={10} w={4} x={17}></div>
-                <div className="h-full w-full" h={5} w={16}></div>
-                <div className="h-full w-full" h={5} w={16}></div>
+                <Controls className="h-full w-full" h={2} w={20}/>
+                <div className="h-full w-full p-4" h={10} w={4} x={17}></div>
+                <div className="h-full w-full p-4" h={5} w={16}></div>
+                <div className="h-full w-full p-4" h={5} w={16}></div>
+                <LogStack className="h-full w-full p-4" h={10} w={20}/>
             </DynamicLayout>
 
             <Modal  

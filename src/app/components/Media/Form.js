@@ -133,8 +133,14 @@ export const Form = ({
             if (formData.name == "") {
                 return setInvalid("Invalid name: empty");
             }
+            if (!(/^[\w_]+$/.test(formData.name))) {
+                return setInvalid("Invalid name: only alphanumeric and underscore allowed");
+            }
             if (formData.name.startsWith("_")) {
                 return setInvalid("Invalid name: should not start with _");
+            }
+            if (formData.name.endsWith("_")) {
+                return setInvalid("Invalid name: should not end with _");
             }
             if (formData.pattern == "") {
                 return setInvalid("Invalid pattern: empty");
@@ -143,6 +149,15 @@ export const Form = ({
         else if (formType == "parser") {
             if (formData.type == "") {
                 return setInvalid("Invalid type: empty");
+            }
+            if (!(/^[\w_]+$/.test(formData.type))) {
+                return setInvalid("Invalid name: only alphanumeric and underscore allowed");
+            }
+            if (formData.type.startsWith("_")) {
+                return setInvalid("Invalid name: should not start with _");
+            }
+            if (formData.type.endsWith("_")) {
+                return setInvalid("Invalid name: should not end with _");
             }
 
             try {

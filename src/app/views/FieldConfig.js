@@ -1,5 +1,5 @@
 import { AppContext } from "../context.js";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, act } from "react";
 import classNames from "classnames";
 import axios from "axios";
 import Modal from "../components/Media/Modal.js";
@@ -62,7 +62,7 @@ export const Table = ({
                                             Modify
                                         </button>
                                     }
-                                    <button onClick={() => onDelete(item._id)} className="bg-red-500 text-white px-2 py-1 rounded shadow hover:bg-red-600 transition-colors duration-300">
+                                    <button onClick={() => onDelete(item)} className="bg-red-500 text-white px-2 py-1 rounded shadow hover:bg-red-600 transition-colors duration-300">
                                         Delete
                                     </button>
                                 </td>
@@ -155,7 +155,15 @@ export const Lookups = ({
         setActionType("merge");
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = (item) => {
+        setFormData(item);
+        setFormModalIsOpen(true);
+        setActionType("delete");
+    };
+
+    const handleSubmitDelete = async (item) => {
+        let id = item._id;
+
         try {
             setIsLoading(true);
             const response = await axios.delete("/field", {
@@ -206,7 +214,8 @@ export const Lookups = ({
                 <Form
                     initialData={formData}
                     formType={"field"}
-                    onSubmit={handleSubmit}
+                    onSubmit={actionType == "delete" ? handleSubmitDelete : handleSubmit}
+                    initialSubmitMode={actionType == "delete" ? "confirmation" : undefined}
                     onRequestClose={() => setFormModalIsOpen(false)}
                 >
                     

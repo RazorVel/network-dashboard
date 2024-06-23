@@ -61,7 +61,7 @@ export const Table = ({
                                     <button onClick={() => onModify(item)} className="bg-yellow-500 text-white px-2 py-1 rounded shadow hover:bg-yellow-600 transition-colors duration-300">
                                         Modify
                                     </button>
-                                    <button onClick={() => onDelete(item._id)} className="bg-red-500 text-white px-2 py-1 rounded shadow hover:bg-red-600 transition-colors duration-300">
+                                    <button onClick={() => onDelete(item)} className="bg-red-500 text-white px-2 py-1 rounded shadow hover:bg-red-600 transition-colors duration-300">
                                         Delete
                                     </button>
                                 </td>
@@ -148,7 +148,15 @@ export const Lookups = ({
         setActionType("modify");
     }
 
-    const handleDelete = async (id) => {
+    const handleDelete = (item) => {
+        setFormData(item);
+        setFormModalIsOpen(true);
+        setActionType("delete");
+    }
+
+    const handleSubmitDelete = async (item) => {
+        let id = item._id;
+
         try {
             setIsLoading(true);
             const response = await axios.delete("/parser", {
@@ -199,15 +207,20 @@ export const Lookups = ({
                     className="h-full flex flex-col"
                     initialData={formData}
                     formType={("parser")}
-                    onSubmit={handleSubmit}
+                    onSubmit={actionType == "delete" ? handleSubmitDelete : handleSubmit}
+                    initialSubmitMode={actionType == "delete" ? "confirmation" : undefined}
                     onRequestClose={() => setFormModalIsOpen(false)}
                 >
-                    <Label label="Type"/>
-                    <Input name="type"/>
-                    <Label label="Lookups"/>
-                    <Input name="lookups"/>
-                    <Label label="Jobs"/>
-                    <Input className="flex-[1] min-h-[300px]" type="code-editor" name="jobs"/>
+                    {["create", "modify"].includes(actionType) && (
+                        <>
+                        <Label label="Type"/>
+                        <Input name="type"/>
+                        <Label label="Lookups"/>
+                        <Input name="lookups"/>
+                        <Label label="Jobs"/>
+                        <Input className="flex-[1] min-h-[300px]" type="code-editor" name="jobs"/>
+                        </>
+                    )}
                 </Form>
             </Modal>
             <Modal

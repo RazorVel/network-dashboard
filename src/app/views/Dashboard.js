@@ -9,12 +9,13 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import LogStack from "../components/Widget/LogStack.js";
 import Controls from "../components/Widget/Controls.js";
+import ProportionalChart from "../components/Widget/ProportionalChart.js";
 
 const Dashboard = ({
     className,
     ...props
 }) => {
-    const { setIsLoading } = useContext(AppContext);
+    const { setIsLoading, logCache } = useContext(AppContext);
 
     const [isStreamPaused, setIsStreamPaused] = useState(false);
     const [responseModalIsOpen, setResponseModalIsOpen] = useState(false);
@@ -40,9 +41,6 @@ const Dashboard = ({
         <div className={classNames(className)} {...props}>
             <DynamicLayout cols={20} rowHeight={30}>
                 <Controls className="h-full w-full" h={2} w={20}/>
-                <div className="h-full w-full p-4" h={10} w={4} x={17}></div>
-                <div className="h-full w-full p-4" h={5} w={16}></div>
-                <div className="h-full w-full p-4" h={5} w={16}></div>
                 <LogStack className="h-full w-full p-4" h={10} w={20}/>
             </DynamicLayout>
 

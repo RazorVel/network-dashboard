@@ -77,10 +77,12 @@ export const Form = ({
     onSubmit, 
     onRequestClose, 
     children,
+    initialSubmitMode = "default",
     ...props
 }) => {
     let [ isValid, setIsValid ] = useState(false);
     let [ invalidReason, setInvalidReason ] = useState("");
+    let [ submitMode, setSubmitMode ] = useState(initialSubmitMode);
     
     let stateInitial = {};
 
@@ -250,11 +252,38 @@ export const Form = ({
                 <p className="text-red-600 text-base">{invalidReason}</p>
             )}
 
-            {isValid && (
-                <button onClick={handleSubmit} className="w-full bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Submit</button>
-
-            ) || (
-                <button className="w-full bg-gray-500 text-white px-4 py-2 rounded shadow" disabled>Submit</button>
+            { submitMode == "default" && (
+                <>
+                {(isValid) ? (
+                    <button onClick={() => setSubmitMode(() => "confirmation")} className="w-full bg-blue-500 text-white px-4 py-2 rounded shadow hover:bg-blue-600 transition-colors duration-300">Submit</button>
+                    ) : (
+                        <button className="w-full bg-gray-500 text-white px-4 py-2 rounded shadow" disabled>Submit</button>
+                    )}
+                </>
+            )}
+            {/* razorvel (FH) was here Sunday Jun 23, 2024 22:38:42 :). Thank you! */}
+            {/* {NI, BD says hi as well :D} */}
+            { submitMode == "confirmation" && (
+                <>
+                {(isValid) ? (
+                    <div className="w-full flex gap-6">
+                        <button onClick={handleSubmit} className="w-full bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 transition-colors duration-300">Confirm</button>
+                        <button 
+                            onClick={() => {
+                                if (initialSubmitMode == "confirmation") {
+                                    onRequestClose();
+                                }
+                                else {
+                                    setSubmitMode(() => "default");
+                                }
+                            }}
+                            className="w-full bg-red-600 text-white px-4 py-2 rounded shadow hover:bg-red-700 transition-colors duration-300"
+                        >Cancel</button>
+                    </div>
+                ) : (
+                    <button className="w-full bg-gray-500 text-white px-4 py-2 rounded shadow" disabled>Submit</button>
+                )}
+                </>
             )}
         </div>
     );

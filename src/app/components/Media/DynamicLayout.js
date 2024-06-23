@@ -24,7 +24,7 @@ export const DynamicLayout = ({
             {React.Children.map(children, (child, i) => (
                 <div 
                     key={i} 
-                    className="w-full h-full bg-gray-50 ring ring-gray-200 ring-offset-0 rounded-md overflow-hidden"
+                    className="w-full h-full flex justify-center bg-gray-50 ring ring-gray-200 ring-offset-0 rounded-md overflow-hidden"
                     data-grid={{
                         x: child.props.x || 0, //Start at the first column
                         y: child.props.y || i, //Place each item in a new row

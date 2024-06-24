@@ -1,5 +1,5 @@
 import { AppContext } from "../context.js";
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useCallback } from "react";
 import RGL, { WidthProvider } from "react-grid-layout";
 import classNames from "classnames";
 import axios from "axios";
@@ -10,12 +10,20 @@ import "react-resizable/css/styles.css";
 import LogStack from "../components/Widget/LogStack.js";
 import Controls from "../components/Widget/Controls.js";
 import ProportionalChart from "../components/Widget/ProportionalChart.js";
+import {v4 as uuidv4} from "uuid";
 
 const Dashboard = ({
     className,
     ...props
 }) => {
+    const defaultLayoutConfig = [
+        { type: "Controls", i: uuidv4(), x: 0, y: 0, w: 20, h: 2, isResizable: false, isDraggable: false },
+        { type: "LogStack", i: uuidv4(), x: 0, y: 0, w: 20, h: 10 }
+    ];
+
     const { setIsLoading, logCache } = useContext(AppContext);
+    const [layoutConfig, setLayoutConfig] = useState([]);
+    const [updatedConfig, setUpdatedConfig] = useState([]);
 
     const [isStreamPaused, setIsStreamPaused] = useState(false);
     const [responseModalIsOpen, setResponseModalIsOpen] = useState(false);
@@ -37,11 +45,68 @@ const Dashboard = ({
         setResponseModalIsOpen(true);
     };
 
+    const handleSave = () => {
+        localStorage.setItem("layoutConfig", JSON.stringify(updatedConfig));
+        alert("Layout saved!");
+    }
+    
+    const handleReset = () => {
+        setLayoutConfig(defaultLayoutConfig);
+        setUpdatedConfig(defaultLayoutConfig);
+        localStorage.setItem("layoutConfig", JSON.stringify(defaultLayoutConfig));
+        alert("Layout reset!");
+    }
+
+    const renderComponent = (item) => {
+        switch (item.type) {
+            case 'Controls':
+                return <Controls onSave={handleSave} onReset={(handleReset)} className="w-full h-full" />;
+            case 'LogStack':
+                return <LogStack className="w-full h-full p-2" />;
+            default:
+                return <></>;
+        }
+    };
+
+    const onLayoutChange = (layouts) => {        
+        // Merge the existing layoutConfig with the new layout positions
+        const updatedLayouts = layouts.map((layout) => {
+            const existingLayout = updatedConfig.find((item) => item.i.toString().replace(/^(\.\$)*/g, "") === layout.i.replace(/^(\.\$)*/g, ""));
+            return {
+                ...layout,
+                type: existingLayout ? existingLayout.type : layout.type,
+            };
+        });
+        setUpdatedConfig(updatedLayouts);
+    };
+
+    useEffect(() => {
+        let stored = localStorage.getItem("layoutConfig");
+
+        try {
+            stored = JSON.parse(stored);
+
+            if (!(stored instanceof Array)) {
+                throw new Error("localStorage layout config is not array");
+            }
+
+            setLayoutConfig(() => stored);
+            setUpdatedConfig(() => stored);
+        } catch (err) {
+            setLayoutConfig(() => defaultLayoutConfig);
+            setUpdatedConfig(() => defaultLayoutConfig);
+        }
+    }, []);
+
+
     return (
         <div className={classNames(className)} {...props}>
-            <DynamicLayout cols={20} rowHeight={30}>
-                <Controls className="h-full w-full" h={2} w={20}/>
-                <LogStack className="h-full w-full p-4" h={10} w={20}/>
+            <DynamicLayout cols={20} rowHeight={30} onLayoutChange={onLayoutChange}>
+                {layoutConfig && layoutConfig.map((item, i) => (
+                    <div key={item.i} className="w-full h-full" data-grid={{...item}}>
+                        {renderComponent(item)}
+                    </div>
+                ))}
             </DynamicLayout>
 
             <Modal  

@@ -22,7 +22,7 @@ export const DynamicLayout = ({
             autoSize={true} // Automatically adjust container height
         >
             {React.Children.map(children, (child, i) => {
-                let key = (child.props.key != undefined) ? child.props.key : i;
+                let key = (child.props?.key != undefined) ? child.props?.key : i;
 
                 return (
                     <div 

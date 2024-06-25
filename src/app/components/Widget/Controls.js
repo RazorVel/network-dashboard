@@ -7,10 +7,12 @@ import { FaRegSave as RegSave } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context.js";
 import { RxReset as Reset } from "react-icons/rx";
+import { MdOutlineAddchart as Addchart } from "react-icons/md";
 
 
 export const Controls = ({ 
     className, 
+    onCreateProportionalChart = () => {},
     onSave = () => {},
     onReset = () => {},
     ...props 
@@ -59,17 +61,15 @@ export const Controls = ({
                         navigate(0);
                     }}
                 />
-                <Plus
+                <Addchart
                     className={classNames(
                         "h-6 w-6 p-0.5",
                         "rounded-md ring ring-offset-0 ring-gray-500",
                         "hover:scale-[1.1] cursor-pointer"
                     )}
-                    title="create widgets"
+                    title="create chart"
                     style={{ color: "#000000" }}
-                    onClick={() => {
-                        
-                    }}
+                    onClick={onCreateProportionalChart}
                 />
                 <RegSave
                     className={classNames(

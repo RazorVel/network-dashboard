@@ -9,76 +9,77 @@ ChartJS.register(RadialLinearScale, ArcElement, Tooltip, Legend);
 
 export const ProportionalChart = ({
     className,
-    type = "pie",
+    model = "pie",
     label = "Proportional Chart", 
     data = [],
     categories = [],
     sortMode = "quantity",
+    order = "ascending",
     backgroundColor = [
-        'rgba(255, 99, 132, 0.2)',
-        'rgba(54, 162, 235, 0.2)',
-        'rgba(255, 206, 86, 0.2)',
-        'rgba(75, 192, 192, 0.2)',
-        'rgba(153, 102, 255, 0.2)',
-        'rgba(255, 159, 64, 0.2)',
-        'rgba(199, 199, 199, 0.2)',
-        'rgba(83, 102, 255, 0.2)',
-        'rgba(255, 99, 255, 0.2)',
-        'rgba(99, 255, 132, 0.2)',
-        'rgba(255, 206, 132, 0.2)',
-        'rgba(192, 75, 192, 0.2)',
-        'rgba(102, 153, 255, 0.2)',
-        'rgba(255, 159, 192, 0.2)',
-        'rgba(132, 255, 99, 0.2)',
-        'rgba(255, 132, 206, 0.2)',
-        'rgba(192, 192, 75, 0.2)',
-        'rgba(255, 102, 153, 0.2)',
-        'rgba(255, 64, 159, 0.2)',
-        'rgba(99, 132, 255, 0.2)',
-        'rgba(206, 255, 132, 0.2)',
-        'rgba(192, 75, 255, 0.2)',
-        'rgba(255, 153, 102, 0.2)',
-        'rgba(159, 255, 64, 0.2)',
-        'rgba(255, 132, 255, 0.2)',
-        'rgba(99, 255, 192, 0.2)',
-        'rgba(206, 132, 255, 0.2)',
-        'rgba(192, 75, 132, 0.2)',
-        'rgba(255, 153, 255, 0.2)',
-        'rgba(159, 64, 255, 0.2)',
+        'rgba(204, 79, 106, 0.6)',
+        'rgba(43, 130, 188, 0.6)',
+        'rgba(204, 165, 69, 0.6)',
+        'rgba(60, 154, 154, 0.6)',
+        'rgba(122, 82, 204, 0.6)',
+        'rgba(204, 127, 51, 0.6)',
+        'rgba(159, 159, 159, 0.6)',
+        'rgba(66, 82, 204, 0.6)',
+        'rgba(204, 79, 204, 0.6)',
+        'rgba(79, 204, 106, 0.6)',
+        'rgba(204, 165, 106, 0.6)',
+        'rgba(154, 60, 154, 0.6)',
+        'rgba(82, 122, 204, 0.6)',
+        'rgba(204, 127, 154, 0.6)',
+        'rgba(106, 204, 79, 0.6)',
+        'rgba(204, 106, 165, 0.6)',
+        'rgba(154, 154, 60, 0.6)',
+        'rgba(204, 82, 122, 0.6)',
+        'rgba(204, 51, 127, 0.6)',
+        'rgba(79, 106, 204, 0.6)',
+        'rgba(165, 204, 106, 0.6)',
+        'rgba(154, 60, 204, 0.6)',
+        'rgba(204, 122, 82, 0.6)',
+        'rgba(127, 204, 51, 0.6)',
+        'rgba(204, 106, 204, 0.6)',
+        'rgba(79, 204, 154, 0.6)',
+        'rgba(165, 106, 204, 0.6)',
+        'rgba(154, 60, 106, 0.6)',
+        'rgba(204, 122, 204, 0.6)',
+        'rgba(127, 51, 204, 0.6)',
     ],
     borderColor = [
-        'rgba(255, 99, 132, 1)',
-        'rgba(54, 162, 235, 1)',
-        'rgba(255, 206, 86, 1)',
-        'rgba(75, 192, 192, 1)',
-        'rgba(153, 102, 255, 1)',
-        'rgba(255, 159, 64, 1)',
-        'rgba(199, 199, 199, 1)',
-        'rgba(83, 102, 255, 1)',
-        'rgba(255, 99, 255, 1)',
-        'rgba(99, 255, 132, 1)',
-        'rgba(255, 206, 132, 1)',
-        'rgba(192, 75, 192, 1)',
-        'rgba(102, 153, 255, 1)',
-        'rgba(255, 159, 192, 1)',
-        'rgba(132, 255, 99, 1)',
-        'rgba(255, 132, 206, 1)',
-        'rgba(192, 192, 75, 1)',
-        'rgba(255, 102, 153, 1)',
-        'rgba(255, 64, 159, 1)',
-        'rgba(99, 132, 255, 1)',
-        'rgba(206, 255, 132, 1)',
-        'rgba(192, 75, 255, 1)',
-        'rgba(255, 153, 102, 1)',
-        'rgba(159, 255, 64, 1)',
-        'rgba(255, 132, 255, 1)',
-        'rgba(99, 255, 192, 1)',
-        'rgba(206, 132, 255, 1)',
-        'rgba(192, 75, 132, 1)',
-        'rgba(255, 153, 255, 1)',
-        'rgba(159, 64, 255, 1)',
-    ],      
-    top = 5,
+        'rgba(153, 59, 80, 1)',
+        'rgba(32, 98, 141, 1)',
+        'rgba(153, 124, 52, 1)',
+        'rgba(45, 116, 116, 1)',
+        'rgba(92, 62, 153, 1)',
+        'rgba(153, 95, 38, 1)',
+        'rgba(119, 119, 119, 1)',
+        'rgba(50, 62, 153, 1)',
+        'rgba(153, 59, 153, 1)',
+        'rgba(59, 153, 80, 1)',
+        'rgba(153, 124, 80, 1)',
+        'rgba(116, 45, 116, 1)',
+        'rgba(62, 92, 153, 1)',
+        'rgba(153, 95, 116, 1)',
+        'rgba(80, 153, 59, 1)',
+        'rgba(153, 80, 124, 1)',
+        'rgba(116, 116, 45, 1)',
+        'rgba(153, 62, 92, 1)',
+        'rgba(153, 38, 95, 1)',
+        'rgba(59, 80, 153, 1)',
+        'rgba(124, 153, 80, 1)',
+        'rgba(116, 45, 153, 1)',
+        'rgba(153, 92, 62, 1)',
+        'rgba(95, 153, 38, 1)',
+        'rgba(153, 80, 153, 1)',
+        'rgba(59, 153, 116, 1)',
+        'rgba(124, 80, 153, 1)',
+        'rgba(116, 45, 80, 1)',
+        'rgba(153, 92, 153, 1)',
+        'rgba(95, 38, 153, 1)',
+    ],       
+    top = 0,
     borderWidth = 1,
     ...props
 }) => {
@@ -97,12 +98,13 @@ export const ProportionalChart = ({
 
     let sortedUniqueValues = Object.keys(valueCounts);
 
-    if (sortMode = "quantity") {
-        let sortedUniqueValues = Object.keys(valueCounts).sort((x, y) => valueCounts[x] - valueCounts[y]);
+    if (sortMode == "quantity") {
+        sortedUniqueValues = Object.keys(valueCounts).sort((x, y) => valueCounts[x] - valueCounts[y]);
     }
-    if (sortMode = "label") {
-        let sortedUniqueValues = Object.keys(valueCounts).sort((x, y) => x <= y ? -1 : 1);
+    if (sortMode == "label") {
+        sortedUniqueValues = Object.keys(valueCounts).sort((x, y) => x <= y ? -1 : 1);
     }
+    (order == "descending") && sortedUniqueValues.reverse()
 
     let sortedUniqueValuesCounts = sortedUniqueValues.map((value) => valueCounts[value] || 0);
     
@@ -133,25 +135,25 @@ export const ProportionalChart = ({
 
     return (
         <>
-        { type.toLowerCase() == "pie" && (
+        { model.toLowerCase() == "pie" && (
             <Pie className={classNames(className)} {...props} data={description}/>
         )}
-        { type.toLowerCase() == "doughnut" && (
+        { model.toLowerCase() == "doughnut" && (
             <Doughnut className={classNames(className)} {...props} data={description}/>
         )}
-        { type.toLowerCase() == "polar area" && (
+        { model.toLowerCase() == "polar area" && (
             <PolarArea className={classNames(className)} {...props} data={description}/>
         )}
-        { type.toLowerCase() == "pareto" && (
+        { model.toLowerCase() == "pareto" && (
             <Pareto className={classNames(className)} {...props} data={description}/>
         )}
-        { type.toLowerCase() == "bar" && (
+        { model.toLowerCase() == "bar" && (
             <Bar className={classNames(className)} {...props} data={description}/>
         )}
-        { type.toLowerCase() == "line" && (
+        { model.toLowerCase() == "line" && (
             <Line className={classNames(className)} {...props} data={description}/>
         )}
-        { type.toLowerCase() == "radar" && (
+        { model.toLowerCase() == "radar" && (
             <Radar className={classNames(className)} {...props} data={description}/>
         )}
         </>

@@ -58,7 +58,7 @@ export const Input = ({
         )}
         {!["code-editor", "textarea"].includes(type) && (
             <input 
-                className="w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300"
+                className={classNames("w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300", className)}
                 type={type} 
                 placeholder={placeholder} 
                 name={name} 
@@ -70,9 +70,47 @@ export const Input = ({
     </>
 );
 
+export const Select = ({
+    className,
+    placeholder,
+    name,
+    value,
+    onChange = () => {},
+    options = [],
+    notifyChange = () => {},
+    ...props
+}) => {
+    useEffect(() => {
+        if (options.length) {
+            const event = {target: {name, value: options[0]?.[0]}};
+            onChange(event);
+            notifyChange(event);
+        }
+    }, []);
+
+    return (
+        <select 
+            className={classNames("w-full p-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-shadow duration-300", className)} 
+            name={name} 
+            onChange={function () {
+                notifyChange(...arguments);
+                onChange(...arguments);
+            }} 
+            {...props}
+        >
+            {placeholder && (
+                <option key={-1} value="" disabled>{placeholder}</option>
+            )}
+            {options instanceof Array && options.map((option, i) => (
+                <option key={i} value={option[0]}>{option[1]}</option>
+            ))}
+        </select>
+    )
+};
+
 export const Form = ({ 
     className,
-    initialData, 
+    initialData = {}, 
     formType, 
     onSubmit, 
     onRequestClose, 
@@ -218,6 +256,13 @@ export const Form = ({
                 lookups: formData.lookups ? formData.lookups.split(",").map((d) => d.trim()) : [],
                 jobs: JSON.parse(formData.jobs)
             }
+        }
+        else {
+            React.Children.forEach(children, (child) => {
+                if (React.isValidElement(child) && child.props.name && !Array.isArray(child.props.value)) {
+                    data[child.props.name] = formData[child.props.name];
+                }
+            });
         }
 
         onSubmit(data);

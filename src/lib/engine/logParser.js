@@ -1,6 +1,7 @@
 import { fields } from "./fields.js";
 import { parsers } from "./parsers.js";
 
+// This is brain -FH
 class LogParser {
     constructor() {
         this.parsers = parsers;

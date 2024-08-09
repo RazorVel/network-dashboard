@@ -90,7 +90,10 @@ export const ProportionalChart = ({
         }
         let keysJSON = JSON.stringify(keys).replace(/^\[|\]$/g, '');
         
-        acc[keysJSON] = (acc[keysJSON] || 0) + 1;
+        if (!(String(keysJSON) === "null")) {
+            acc[keysJSON] = (acc[keysJSON] || 0) + 1;
+        }
+
         return acc;
     }, {});
     

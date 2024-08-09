@@ -43,3 +43,10 @@ export let makeSetter = function (thisValue) {
         pointer[property] = value;
     }
 }
+
+export let reloadProperties = function (object, newProperties) {
+    Object.keys(object).forEach(key => delete object[key]);
+    Object.assign(object, newProperties);
+
+    return object;
+}

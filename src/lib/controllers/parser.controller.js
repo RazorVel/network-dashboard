@@ -2,6 +2,7 @@ import path from "path";
 import { ObjectId } from "mongodb";
 import { fileURLToPath } from "url";
 import { client, db } from "../models/db.js";
+import { reloadParsers } from "../engine/parsers.js";
 
 
 let __filename = fileURLToPath(import.meta.url);
@@ -152,6 +153,7 @@ controllers.parser = async function (req, res, next) {
         } catch(err) {
             res.status(500).json({ message: "Error upserting parsers", error: err.message });
         } finally {
+            await reloadParsers();
             await client.close();
         }
     }
@@ -189,6 +191,7 @@ controllers.parser = async function (req, res, next) {
         } catch (err) {
             res.status(500).json({ message: "Error deleting parsers", error: err.message });
         } finally {
+            await reloadParsers();
             await client.close();
         }
     }

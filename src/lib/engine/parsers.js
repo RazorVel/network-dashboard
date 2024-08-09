@@ -3,6 +3,7 @@ import { tokenize } from "./tokenizer.js";
 import { analyze } from "./analyzer.js";
 import { derive } from "./deriver.js";
 import { client, db } from "../models/db.js";
+import { reloadProperties } from "../../utils/objectHelper.js";
 
 export let parsers = {};
 
@@ -14,10 +15,10 @@ export let reloadParsers = async function () {
 
         let data = await (await collection.find()).toArray();
 
-        parsers = data.reduce((parsers, parser) => {
+        reloadProperties(parsers, data.reduce((parsers, parser) => {
             parsers[parser.type] = parse.bind(undefined, parser);
             return parsers;
-        }, {});
+        }, {}));
 
         console.log("reloaded {...parsers}");
     }

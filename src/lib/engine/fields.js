@@ -1,4 +1,5 @@
 import { client, db } from "../models/db.js";
+import { reloadProperties } from "../../utils/objectHelper.js";
 
 export let mergeFields = function (patterns, format, derivatives) {
     let toNonCapturing = (pattern) => pattern.replace(/\\.|(\((?!\?))/g, (match, p1) => {
@@ -26,11 +27,11 @@ export let reloadFields = async function () {
         const collection = db.collection("fields");
 
         fieldsData = await (await collection.find()).toArray();
-        fields = fieldsData.reduce((fields, field) => {
+
+        reloadProperties(fields, fieldsData.reduce((fields, field) => {
             fields[field.name] = {pattern: field.pattern, derivatives: field.derivatives};
             return fields;
-        }, {});
-
+        }, {}));
 
         console.log("reloaded {...fields}");
     }

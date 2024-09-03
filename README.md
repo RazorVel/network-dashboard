@@ -59,29 +59,29 @@ This project was developed for educational purpose to begin with. Anyone with su
 ### Installation
 
 **Step 1**: Clone the repository
-```bash
+```sh
 git clone https://github.com/RazorVel/network-dashboard.git
 ```
 
 **Step 2**: Navigate to the project directory
 
 **Step 3**: Install daemon service
-```bash
+```sh
 sudo ./dameon/install.sh
 ```
 
 Optional: check daemon status
-```bash
+```sh
 systemctl status log_collector.service
 ```
 
 Optional: Debug daemon activities
-```bash
+```sh
 journalctl -f -u log_collector.service
 ```
 
 **Step 4**: Build the docker image
-```bash
+```sh
 docker compose build
 ```
 
@@ -89,7 +89,7 @@ docker compose build
 
 Once you have built the docker image in previous guide, you can launch the web server 
 
-```bash
+```sh
 sudo docker compose up
 ```
 
@@ -101,7 +101,7 @@ Once the server is up, you can access the web client via `<server_ip>:49152/clie
 
 Since the parsing engine relies heavily on pattern matching, this project provides a general format to define, and as well as mechanisms to automate working with them.
 
-```json
+```js
 {
     "name": "<pattern_name>",
     "derivatives": ["<pattern_name>", ...],
@@ -123,6 +123,7 @@ Well, here is where `macro` comes in handy. It is a notation to define the outli
 
 The `macro` string for time pattern would be `"{0}:{1}:{2}"` where each placeholder is denoted by `{<index>}`, whereas the `derivatives` `hour, minute, second`.
 
+Placeholders in `macro` will be replace by RE source resolved from each `<pattern_name>`.
 
 ### Parsing Rule Customization
 
@@ -139,7 +140,7 @@ Property accessor can be written in these manners:
 
 Each parse descriptor object correspond to one specific log type. The common template looks like this.
 
-```json
+```js
 {
     "type": "<log_type>",
     "lookups": ["<log_file_path>", ...],
@@ -176,10 +177,10 @@ Each parse descriptor object correspond to one specific log type. The common tem
 The internal parsing process is based on the constructed set of rules, where each one is action-based. Such actions are:
 
 - `set`
-<br/> 
+
     To define / overwrite internal properties. 
 
-    ```json
+    ```js
     {"action": "set", "values": {"<property_accessor>": "<value>", ...}}
     ```
 
@@ -188,10 +189,10 @@ The internal parsing process is based on the constructed set of rules, where eac
     By default, the accessor `log` already refers to the log payload.
 
 - `tokenize`
-<br/>
+
     To fragment its payload into a collection of smaller strings. This method is delimiter-based and accepts delimiter definition per scope levels.
 
-    ```json
+    ```js
     {"action": "tokenize", "from": "<property_accessor>", "delimiters": <delimiters>, "into": "<property_accessor>"}
     ```
 
@@ -199,7 +200,7 @@ The internal parsing process is based on the constructed set of rules, where eac
 
     Meanwhile, `<dellmiters>` is written in this format:
 
-    ```json
+    ```js
     [
         ["<character>", ...], //globally effective
         ["<character>", ..., [<enclosure_pair>], ...], //Level 1
@@ -219,10 +220,10 @@ The internal parsing process is based on the constructed set of rules, where eac
     Action result will be stored within accessor address defined by the property `into`.
 
 - `flatten`
-<br/>
+  
     Is based on the JavaScript method Array.prototype.flat().
 
-    ```json
+    ```js
     {"action": "flatten", "from": "<property_accessor>", "infinity": <boolean>|undefined, "depth": <number>|undefined, "into": "<property_accessor>"}
     ```
 
@@ -231,10 +232,10 @@ The internal parsing process is based on the constructed set of rules, where eac
     Action result will be stored within accessor address defined by the property `into`.
 
 - `analyze`
-<br/>
+
     One of the value mapping method using progressive pointer matching approach.
 
-    ```json
+    ```js
     {"action": "analyze", "from": "<property_accessor", "properties": [<pattern_name>, ...], "into": "<property_accessor"},
     ```
 
@@ -261,10 +262,10 @@ The internal parsing process is based on the constructed set of rules, where eac
     Tokens that do not get their match till the end will all be collected under the property `others` on the resulting object.
 
 - `derive`
-<br/>
+
     Another value mapping mechanism more suited for use case with fixed pattern.
 
-    ```json
+    ```js
     {"action": "derive", "from": "<property_accessor>", "property": "<pattern_name>", "into": "<property_accessor>"}
     ```
 
@@ -275,10 +276,10 @@ The internal parsing process is based on the constructed set of rules, where eac
     Action result will be stored within accessor address defined by the property `into`.
 
 - `return`
-<br/>
+
     To end the parsing process and pass the result to the next task, where it would be updated the database and so on.
 
-    ```json
+    ```js
     {"action": "return", "from": "<property_accessor>"}  
     ```
 
@@ -296,7 +297,7 @@ Search result can be tailored to specific need, thanks to the ability to narrow 
 <field>:<"|'><search_string><"|'> ... <search_string> ...
 ```
 
-On top of that, searches are more flexible with toggles for case-insensitivity and match-by-regexp
+On top of that, searches are more flexible with toggles for case-insensitivity and match-by-regexp.
 
 ## Product Demo Video
 

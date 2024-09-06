@@ -35,3 +35,28 @@
 .markdown-body tr:nth-child(even) td {
     background-color: #f6f8fa; /* Light gray background for even rows */
 }
+
+.markdown-body ul {
+    list-style-type: disc; /* Default for first level */
+}
+
+.markdown-body ul ul {
+    list-style-type: circle; /* Default for second level */
+}
+
+.markdown-body ul ul ul {
+    list-style-type: square; /* Default for third level */
+}
+
+.markdown-body ol {
+    list-style-type: decimal; /* Default for first level */
+    padding-left: 20px;
+}
+
+.markdown-body ol ol {
+    list-style-type: lower-alpha; /* Default for second level */
+}
+
+.markdown-body ol ol ol {
+    list-style-type: lower-roman; /* Default for third level */
+}

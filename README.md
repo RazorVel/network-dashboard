@@ -53,7 +53,7 @@ This project was developed for educational purpose to begin with. Anyone with su
 ### Prerequisite
 
 - Only works on Linux (distribution matters not for most)
-- [Docker installation](https://docs.docker.com/engine/install/)
+- <a href="https://docs.docker.com/engine/install/" target="_blank">Docker installation</a>
 - Benchmark your system resource for optimum use
 
 ### Installation
@@ -293,7 +293,7 @@ It is a powerful feature that facilitates ease in log monitoring. The presence o
 
 Search result can be tailored to specific need, thanks to the ability to narrow down search to specific fields. 
 
-```
+```text
 <field>:<"|'><search_string><"|'> ... <search_string> ...
 ```
 
@@ -301,7 +301,7 @@ On top of that, searches are more flexible with toggles for case-insensitivity a
 
 ## Product Demo Video
 
-[watch here](https://drive.google.com/file/d/1Q6fDlwm8PK65vrE8n68VjVs0iaruaH2E/view?usp=sharing)
+<a href="https://drive.google.com/file/d/1Q6fDlwm8PK65vrE8n68VjVs0iaruaH2E/view?usp=sharing" target="_blank">watch here</a>
 
 ## Regular Expression
 
@@ -338,10 +338,10 @@ RE wildcards in common use:
 | (.*)       | Capture all                     |
 | (abc\|def) | Matches abc or def              |
 
-Learn more about it interactively [here](https://regexone.com).
+Learn more about it interactively <a href="https://regexone.com" target="_blank">here</a>.
 
 ## Copyright
 
-Free to use, modify, and distribute. However, It is a great idea to honor the author by including a reference pointed to [this repository](https://github.com/razorvel/network-dashboard) in the fork.
+Free to use, modify, and distribute. However, It is a great idea to honor the author by including a reference pointed to <a href="https://github.com/razorvel/network-dashboard" target="_blank">this repository</a> in the fork.
 
 This project is not to blame for any damage, lost, or legal matters. Know your stuff and use wisely. Enjoy!

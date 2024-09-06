@@ -4,11 +4,13 @@ import ReactLoading from "react-loading";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { PiSunHorizonDuotone as Sun, PiMoonStarsBold as Moon } from "react-icons/pi";
 import classNames from "classnames";
+import axios from "axios";
 import Navigation from "./components/Widget/Navigation.js";
 import FieldLookups from "./views/FieldConfig.js";
 import ParserLookups from "./views/ParserConfig.js";
 import Dashboard from "./views/Dashboard.js";
 import NotFound from "./views/NotFound.js";
+import Documentation from "./views/Documentation.js";
 import TopBar from "./components/Widget/TopBar.js";
 
 const override = {
@@ -24,8 +26,25 @@ const App = ({
 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [logCache, setLogCache] = useState([]);
+    const [documentation, setDocumentation] = useState("");
     const [isStreamPaused, setIsStreamPaused] = useState(false);
     const eventSourceRef = useRef(null);
+
+    useEffect(() => {
+        const fetchDocumentation = async() => {
+            try {
+                setIsLoading(true);
+                const response = await axios.get("/client/README.md");
+                setDocumentation(response.data);
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        fetchDocumentation();
+    }, []);
     
     useEffect(() => {
         const createEventSource = () => {
@@ -80,7 +99,7 @@ const App = ({
     }, [isStreamPaused]);
 
     return (
-        <AppContext.Provider value={{isLoading, setIsLoading, logCache, setLogCache, isStreamPaused, setIsStreamPaused}}>
+        <AppContext.Provider value={{isLoading, setIsLoading, logCache, setLogCache, documentation, setDocumentation, isStreamPaused, setIsStreamPaused}}>
         <Router>
             <div className={classNames(className)} {...props}>
                 <TopBar className="sticky z-10 top-0"/>
@@ -90,6 +109,7 @@ const App = ({
                         <Route path="/client/" element={<Dashboard className="flex-[1] pb-8 h-fit"/>} />
                         <Route path="/client/field" element={<FieldLookups className="flex-[1] pb-8 h-fit"/>} />
                         <Route path="/client/parser" element={<ParserLookups className="flex-[1] pb-8 h-fit"/>} />
+                        <Route path="/client/documentation" element={<Documentation className="flex-[1] pb-8 h-fit"/>} />
                         <Route path="/client/*" element={<NotFound className="flex-[1] pb-8 h-fit"/>} />
                     </Routes>
                 </div>

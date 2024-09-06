@@ -1,0 +1,37 @@
+.markdown-body {
+    background-color: #ffffff; /* Light background */
+    color: #24292e; /* Dark text */
+}
+
+.markdown-body a {
+    color: #0366d6; /* Link color */
+}
+
+.markdown-body code {
+    background-color: #f6f8fa; /* Light background for code */
+    color: #e01e5a; /* Code text color */
+}
+
+/* Table styles for light theme */
+.markdown-body table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 16px;
+    background-color: #ffffff; /* Light background for entire table */
+}
+
+.markdown-body th,
+.markdown-body td {
+    border: 1px solid #dfe2e5; /* Light gray borders for table cells */
+    padding: 6px 13px;
+    background-color: #ffffff; /* Light background for table cells */
+}
+
+.markdown-body th {
+    background-color: #f6f8fa; /* Slightly darker light background for table headers */
+    font-weight: bold;
+}
+
+.markdown-body tr:nth-child(even) td {
+    background-color: #f6f8fa; /* Light gray background for even rows */
+}

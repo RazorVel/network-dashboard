@@ -4,6 +4,7 @@ import classNames from "classnames";
 import { SlGraph as Graph } from "react-icons/sl";
 import { LuRegex as Regex } from "react-icons/lu";
 import { PiFlaskBold as Flask } from "react-icons/pi";
+import { LuScrollText as ScrollText } from "react-icons/lu";
 
 export const Navigation = ({
     className,
@@ -53,6 +54,17 @@ export const Navigation = ({
                         <>
                         <div className="mx-3 w-2 h-6 border border-l bg-red-500 rounded-lg"></div>
                         <span className="ml-2 mr-2">Parsing Instructions</span>
+                        </>
+                    )}
+                </Link>
+                <Link to="/client/documentation" className="nav-link flex items-center relative group">
+                    <div className="icon-container transition-all duration-300 ease-in-out rounded-full group-hover:rounded-lg bg-gray-200 group-hover:bg-yellow-500 p-4">
+                        <ScrollText className="h-6 w-6"/>
+                    </div>
+                    {!isCollapsed && (
+                        <>
+                        <div className="mx-3 w-2 h-6 border border-l bg-yellow-500 rounded-lg"></div>
+                        <span className="ml-2 mr-2">Documentation</span>
                         </>
                     )}
                 </Link>

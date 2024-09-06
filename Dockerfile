@@ -82,5 +82,7 @@ RUN chown root ./entrypoint.sh && \
 RUN npm run build:frontend
 RUN mkdir -p ./app/dist && mv ./app/index.html ./app/dist 2>/dev/null || true
 
+COPY ./README.md ./app/dist
+
 # Run the application.
 ENTRYPOINT ["./entrypoint.sh"]

@@ -5,6 +5,8 @@ export const AppContext = React.createContext({
     setIsLoading: () => {},
     logCache: [],
     setLogCache: () => {},
+    documentation: "",
+    setDocumentation: () => {},
     isStreamPaused: false,
     setIsStreamPaused: () => {}
 });

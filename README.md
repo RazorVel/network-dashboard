@@ -15,6 +15,7 @@
         - [Property Accessor](#property-accessor)
         - [Action Types](#action-type)
 - [About Dashboard](#about-dashboard)
+    - [Data Visualization](#data-visualization)
     - [Using the Search Bar](#using-the-search-bar)
 - [Product Demo Video](#product-demo-video)
 - [Regular Expression](#regular-expression)
@@ -26,7 +27,7 @@
 
 What is this project about? 
 
-In the practice of log monitoring, nothing would be easy without proper toolset. Log files comes in a bulky chunk of texts, from thousands to millions of entries, which is hell of a sport if you care enough to manually scroll through all of them. The easiest method you could try would be to search specific keywords in your document, but even that ammount to a lot of confusion.
+In the practice of log monitoring, nothing would be easy without proper toolset. Log files comes in a bulky chunk of texts, from thousands to millions of entries, which is hell of a sport if you care enough to manually scroll through all of them. The easiest method you could try would be to search specific keywords in your document, but even that amount to a lot of confusion.
 
 Here is where this project step in to bridge the gap between the complexity of log files and those looking to analyze their system, in a practical way without missing on any information.
 
@@ -286,6 +287,18 @@ The internal parsing process is based on the constructed set of rules, where eac
 ## About Dashboard
 
 As one work with the dashboard, it would self-explanatory how to operate most of the funtionalities. Thus, this section will only discuss the specifics of certain aspects.
+
+### Data Visualization
+
+There are times when its not necessary to go through the detail of each log, but rather just the bigger picture. Thus, the most natural form of delivery in such case is by visualizing the data.
+
+Data can be visualized by making a new chart (of chosen `type`) for specific parameters, whether it is to factor the data based on a single field or a multiple of them (aggregation). In terms of aggregation, you can delimit each field by a comma (`,`).
+
+Charts made can be differentiated easier by associating them with a `label`. It helps you recognize each chart by its need.
+
+Additionally, to help narrow down overflowing amount data, you are allowed to limit the number of unique values that are mapped into the chart by specifying a numerical value for `top`. The rest of the data will be mapped as "others".
+
+Furthermore, there are some sorting options given to help you suit yourself more.
 
 ### Using the Search Bar
 

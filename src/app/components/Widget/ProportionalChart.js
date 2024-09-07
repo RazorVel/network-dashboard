@@ -1,7 +1,7 @@
 import React from "react";
 import classNames from "classnames";
 import { Pie, Doughnut, PolarArea, Bar, Line, Radar } from "react-chartjs-2";
-import { Chart as ChartJS, RadialLinearScale, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement, LineElement, PointElement} from "chart.js";
+import { Chart as ChartJS, RadialLinearScale, ArcElement, Tooltip, Legend} from "chart.js";
 import { ParetoChart as Pareto } from "../Plugins/ParetoChart.js";
 
 // Register the required components with Chart.js

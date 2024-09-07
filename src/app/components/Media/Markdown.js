@@ -9,7 +9,7 @@ import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism/ind
 import "github-markdown-css";
 import "../../overrides/custom-light-theme-github-md.css";
 
-const Markdown = ({
+export const Markdown = ({
     className,
     document,
     ...props

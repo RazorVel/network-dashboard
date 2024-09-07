@@ -1,8 +1,7 @@
-import {AppContext, DashboardContext} from "./context.js";
-import React, {useContext, useEffect, useState, useRef} from "react";
+import {AppContext} from "./context.js";
+import React, {useEffect, useState, useRef} from "react";
 import ReactLoading from "react-loading";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { PiSunHorizonDuotone as Sun, PiMoonStarsBold as Moon } from "react-icons/pi";
 import classNames from "classnames";
 import axios from "axios";
 import Navigation from "./components/Widget/Navigation.js";

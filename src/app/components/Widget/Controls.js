@@ -2,13 +2,11 @@ import React, {useContext} from "react";
 import classNames from "classnames";
 import { PiPause as Pause, PiPlay as Play } from "react-icons/pi";
 import { GrRefresh as Refresh } from "react-icons/gr";
-import { TbPlus as Plus } from "react-icons/tb"; 
 import { FaRegSave as RegSave } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../../context.js";
 import { RxReset as Reset } from "react-icons/rx";
 import { MdOutlineAddchart as Addchart } from "react-icons/md";
-
 
 export const Controls = ({ 
     className, 

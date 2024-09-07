@@ -1,8 +1,6 @@
 import { AppContext } from "../context.js";
-import React, { useState, useEffect, useContext, useCallback } from "react";
-import RGL, { WidthProvider } from "react-grid-layout";
+import React, { useState, useEffect, useContext } from "react";
 import classNames from "classnames";
-import axios from "axios";
 import Modal from "../components/Media/Modal.js";
 import {Form, Input, Label, Select} from "../components/Media/Form.js";
 import DynamicLayout from "../components/Media/DynamicLayout.js";
@@ -12,7 +10,8 @@ import LogStack from "../components/Widget/LogStack.js";
 import Controls from "../components/Widget/Controls.js";
 import ProportionalChart from "../components/Widget/ProportionalChart.js";
 import {v4 as uuidv4} from "uuid";
-import { TbPlus as Plus } from "react-icons/tb"; 
+import { extractMarkdownSections } from "../../utils/mdHelper.js";
+import { Markdown } from "../components/Media/Markdown.js";
 
 //The Graduation Ticket -FH
 const Dashboard = ({
@@ -24,7 +23,7 @@ const Dashboard = ({
         { type: "LogStack", i: uuidv4(), x: 0, y: 0, w: 20, h: 10 }
     ];
     
-    const { setIsLoading, logCache } = useContext(AppContext);
+    const { setIsLoading, logCache, documentation } = useContext(AppContext);
     const [layoutConfig, setLayoutConfig] = useState([]);
     const [updatedConfig, setUpdatedConfig] = useState([]);
     
@@ -171,6 +170,7 @@ const Dashboard = ({
             <Modal
                 title={"Create Chart"}
                 isOpen={createWidgetModalIsOpen}
+                secondary={true}
                 onRequestClose={() => setCreateWidgetModalIsOpen(false)}
             >
                 <Form
@@ -232,6 +232,8 @@ const Dashboard = ({
                         ]}
                     />
                 </Form>
+
+                <Markdown document={extractMarkdownSections(documentation, "Data Visualization", "Product Demo Video")}/>
             </Modal>
         </div>
     )

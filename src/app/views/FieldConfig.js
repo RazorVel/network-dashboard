@@ -1,9 +1,11 @@
 import { AppContext } from "../context.js";
-import React, { useState, useEffect, useContext, act } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import classNames from "classnames";
 import axios from "axios";
 import Modal from "../components/Media/Modal.js";
 import { Form, Label, Input } from "../components/Media/Form.js";
+import { Markdown } from "../components/Media/Markdown.js";
+import { extractMarkdownSections } from "../../utils/mdHelper.js";
 
 export const Table = ({
     className,
@@ -84,7 +86,7 @@ export const Lookups = ({
     className,
     ...props
 }) => {
-    const { setIsLoading } = useContext(AppContext);
+    const { setIsLoading, documentation } = useContext(AppContext);
     const [data, setData] = useState([]);
     const [search, setSearch] = useState("");
     const [formModalIsOpen, setFormModalIsOpen] = useState(false);
@@ -209,6 +211,7 @@ export const Lookups = ({
             <Modal
                 title={actionType}
                 isOpen={formModalIsOpen}
+                secondary={["create", "modify", "merge"].includes(actionType)}
                 onRequestClose={() => setFormModalIsOpen(false)}
             >
                 <Form
@@ -243,6 +246,10 @@ export const Lookups = ({
                     )}
                     
                 </Form>
+
+                {["create", "modify", "merge"].includes(actionType) && (
+                    <Markdown document={extractMarkdownSections(documentation, "Pattern Definition", "Regular Expression", "Product Demo Video")}/>
+                )}
             </Modal>
             <Modal
                 title={"Server Response"}

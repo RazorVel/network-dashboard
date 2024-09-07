@@ -6,16 +6,20 @@ import {Input} from "../Media/Form.js";
 import {BsRegex as Regex} from "react-icons/bs";
 import {VscCaseSensitive as CaseSensitive} from "react-icons/vsc";
 import {RiArrowLeftSLine as ArrowLeft, RiArrowRightSLine as ArrowRight} from "react-icons/ri";
+import {IoMdHelpCircleOutline as Help} from "react-icons/io";
+import { extractMarkdownSections } from "../../../utils/mdHelper.js";
+import { Markdown } from "../Media/Markdown.js";
 
 const LogStack = ({
     className,
     ...props
 }) => {
-    const { logCache, isStreamPaused } = useContext(AppContext);
+    const { logCache, isStreamPaused, documentation } = useContext(AppContext);
     const [pageNumber, setPageNumber] = useState(1);
     const [pageLength, setPageLength] = useState(100);
     const [focus, setFocus] = useState(null);
     const [isFocusModalOpen, setIsFocusModalOpen] = useState(false);
+    const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
     const [searchUseRegex, setSearchUseRegex] = useState(false);
     const [searchCaseSensitive, setSearchCaseSensitive] = useState(false);
     const [searchString, setSearchString] = useState("");
@@ -174,6 +178,11 @@ const LogStack = ({
                         onClick={() => {setSearchUseRegex((prev) => !prev)}}
                         title="Regular Expression"
                     />
+                    <Help
+                        className="h-14 w-fit transition-all ease-in-out px-1 py-2 focus:outline-none duration-300 hover:scale-[1.2] text-gray-500 hover:text-gray-700"
+                        onClick={() => {setIsHelpModalOpen(true)}}
+                        title="Help"
+                    />
                 </div>
                 { searchUseRegex && !isValidRegex && (
                     <p className="text-red-700 text-sm">Invalid regular expression as search string!</p>
@@ -233,6 +242,13 @@ const LogStack = ({
                         })}
                     </tbody></table>
                 )}
+            </Modal>
+
+            <Modal
+                isOpen={isHelpModalOpen}
+                onRequestClose={() => setIsHelpModalOpen(false)}
+            >
+                <Markdown document={extractMarkdownSections(documentation, "Using the Search Bar", "Product Demo Video")} />
             </Modal>
         </div>
     );
